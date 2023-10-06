@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # Inicio del tiempo de carga total de libros desde Excel
     total_start_time = time.time()
     
-    libros = leer_libros_excel("10k.xlsx")
+    libros = leer_libros_excel("100k.xlsx")
     
     # Listas para almacenar los tiempos de cada operación de agregar libro y los nombres de los libros
     add_times = []
@@ -112,7 +112,6 @@ if __name__ == "__main__":
     # Gráfica de los tiempos de adición de cada libro
     plt.plot(libro_names, add_times, marker='o', linestyle='', color='b', label='Tiempo de adición')
     plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
-    plt.axhline(y=total_time, color='g', linestyle='--', label='Tiempo total')
     plt.xlabel('Libro')
     plt.ylabel('Tiempo (s)')
     plt.title('Tiempos de Adición de Libros')
@@ -121,7 +120,7 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.show()
 
-    
+
     while True:
         opcion = menu()
         
