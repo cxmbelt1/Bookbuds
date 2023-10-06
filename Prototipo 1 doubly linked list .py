@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # Inicio del tiempo de carga total de libros desde Excel
     total_start_time = time.time()
     
-    libros = leer_libros_excel("100k.xlsx")
+    libros = leer_libros_excel("1m.xlsx")
     
     # Listas para almacenar los tiempos de cada operación de agregar libro y los nombres de los libros
     add_times = []
