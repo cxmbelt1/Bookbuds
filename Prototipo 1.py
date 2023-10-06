@@ -69,7 +69,7 @@ def menu():
 
 if __name__ == "__main__":
     lista = ListaLibros()
-    libros = leer_libros_excel("1m.xlsx")
+    libros = leer_libros_excel("10k.xlsx")
     for libro in libros:
         lista.agregar_libro(libro)
 
@@ -102,10 +102,10 @@ if __name__ == "__main__":
                 end_time = time.time()
                 search_time = end_time - start_time
                 total_time += search_time
-                print(f"Tiempo para buscar '{libro}': {search_time:.5f} segundos")
+                print(f"Tiempo para buscar '{libro}': {search_time:.8f} segundos")
             
             avg_time = total_time / num_searches if num_searches > 0 else 0
-            print(f"\nTiempo promedio de búsqueda: {avg_time:.5f} segundos")
+            print(f"\nTiempo promedio de búsqueda: {avg_time:.8f} segundos")
         
         elif opcion == "6":
             print("Saliendo del programa...")
