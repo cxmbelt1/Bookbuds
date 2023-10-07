@@ -77,7 +77,7 @@ def menu():
 if __name__ == "__main__":
     lista = ListaLibros()
     
-    libros = generar_libros_aleatorios(1000, 10)
+    libros = generar_libros_aleatorios(100000, 10)
     
     add_times = []
     libro_names = []
