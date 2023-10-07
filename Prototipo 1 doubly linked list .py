@@ -77,7 +77,7 @@ def menu():
 if __name__ == "__main__":
     lista = ListaLibros()
     
-    libros = generar_libros_aleatorios(100000, 10)
+    libros = generar_libros_aleatorios(1000, 10)
     
     add_times = []
     libro_names = []
@@ -147,33 +147,32 @@ if __name__ == "__main__":
             lista.imprimir_lista()
         
         elif opcion == "5":
-            total_time = 0
-            num_searches = len(libros)
             search_times = []
             
             start_all_time = time.time()
             for libro in libros:
-                start_time = time.time()
+                start_time = time.perf_counter()
                 lista.buscar_libro(libro)
-                end_time = time.time()
+                end_time = time.perf_counter()
                 search_time = end_time - start_time
                 search_times.append(search_time)
-                total_time += search_time
-                print(f"Tiempo para buscar '{libro}': {search_time:.8f} segundos")
+                print(f"Tiempo para buscar '{libro}': {search_time:.20f} segundos")
             end_all_time = time.time()
             all_search_time = end_all_time - start_all_time
             
-            avg_time = total_time / num_searches if num_searches > 0 else 0
-            print(f"\nTiempo promedio de búsqueda: {avg_time:.8f} segundos")
-            print(f"Tiempo total para buscar todos los libros: {all_search_time:.8f} segundos")
+            avg_time = sum(search_times) / len(search_times) if search_times else 0
+            print(f"\nTiempo promedio de búsqueda: {avg_time:.20f} segundos")
+            print(f"Tiempo total para buscar todos los libros: {all_search_time:.20f} segundos")
             
-            plt.plot(search_times, marker='o', linestyle='', color='b', label='Tiempo de búsqueda')
+            plt.plot(libro_names, search_times, marker='o', linestyle='', color='b', label='Tiempo de búsqueda')
             plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
             plt.xlabel('Libro')
             plt.ylabel('Tiempo (s)')
             plt.title('Tiempos de Búsqueda de Libros')
             plt.legend()
+            plt.xticks([])
             plt.tight_layout()
+            plt.grid(axis='y')
             plt.show()
         
         elif opcion == "6":
@@ -181,33 +180,32 @@ if __name__ == "__main__":
             break
         
         elif opcion == "7":
-            total_time = 0
-            num_deletions = len(libros)
             deletion_times = []
             
             start_all_time = time.time()
             for libro in libros:
-                start_time = time.time()
+                start_time = time.perf_counter()
                 lista.eliminar_libro(libro)
-                end_time = time.time()
+                end_time = time.perf_counter()
                 deletion_time = end_time - start_time
                 deletion_times.append(deletion_time)
-                total_time += deletion_time
-                print(f"Tiempo para eliminar '{libro}': {deletion_time:.12f} segundos")
+                print(f"Tiempo para eliminar '{libro}': {deletion_time:.20f} segundos")
             end_all_time = time.time()
             all_deletion_time = end_all_time - start_all_time
             
-            avg_time = total_time / num_deletions if num_deletions > 0 else 0
-            print(f"\nTiempo promedio de eliminación: {avg_time:.12f} segundos")
-            print(f"Tiempo total para eliminar todos los libros: {all_deletion_time:.12f} segundos")
+            avg_time = sum(deletion_times) / len(deletion_times) if deletion_times else 0
+            print(f"\nTiempo promedio de eliminación: {avg_time:.20f} segundos")
+            print(f"Tiempo total para eliminar todos los libros: {all_deletion_time:.20f} segundos")
             
-            plt.plot(deletion_times, marker='o', linestyle='', color='b', label='Tiempo de eliminación')
+            plt.plot(libro_names, deletion_times, marker='o', linestyle='', color='b', label='Tiempo de eliminación')
             plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
             plt.xlabel('Libro')
             plt.ylabel('Tiempo (s)')
             plt.title('Tiempos de Eliminación de Libros')
             plt.legend()
+            plt.xticks([])
             plt.tight_layout()
+            plt.grid(axis='y')
             plt.show()
         
         else:
