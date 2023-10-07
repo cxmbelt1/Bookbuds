@@ -71,13 +71,15 @@ def menu():
     print("5. Buscar todos los libros y calcular tiempo promedio")
     print("6. Salir")
     print("7. Eliminar todos los libros y calcular tiempo promedio")
+    print("8. Eliminar libros aleatorios y calcular tiempo promedio")
+    print("9. Buscar libros aleatorios y calcular tiempo promedio")
     opcion = input("Seleccione una opción: ")
     return opcion
 
 if __name__ == "__main__":
     lista = ListaLibros()
     
-    libros = generar_libros_aleatorios(100000, 10)
+    libros = generar_libros_aleatorios(10000, 10)
     
     add_times = []
     libro_names = []
@@ -95,7 +97,7 @@ if __name__ == "__main__":
         add_times.append(add_time)  # Añade el tiempo a la lista de tiempos
         libro_names.append(libro)  # Añade el nombre del libro a la lista de nombres
         
-        print(f"Tiempo para añadir el libro '{libro}': {add_time:.20f} segundos")
+        
 
     
     total_end_time = time.time()
@@ -156,16 +158,23 @@ if __name__ == "__main__":
                 end_time = time.perf_counter()
                 search_time = end_time - start_time
                 search_times.append(search_time)
-                print(f"Tiempo para buscar '{libro}': {search_time:.20f} segundos")
+                
             end_all_time = time.time()
             all_search_time = end_all_time - start_all_time
             
             avg_time = sum(search_times) / len(search_times) if search_times else 0
             print(f"\nTiempo promedio de búsqueda: {avg_time:.20f} segundos")
             print(f"Tiempo total para buscar todos los libros: {all_search_time:.20f} segundos")
+
+
+
             
             plt.plot(libro_names, search_times, marker='o', linestyle='', color='b', label='Tiempo de búsqueda')
             plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
+            x = np.arange(len(libro_names))  # Crear un array con el número de libros
+            y = np.array(search_times)  # Convertir los tiempos de búsqueda a un array numpy
+            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
+            plt.plot(x, m*x + b, color='g', label='Línea de tendencia') 
             plt.xlabel('Libro')
             plt.ylabel('Tiempo (s)')
             plt.title('Tiempos de Búsqueda de Libros')
@@ -189,7 +198,7 @@ if __name__ == "__main__":
                 end_time = time.perf_counter()
                 deletion_time = end_time - start_time
                 deletion_times.append(deletion_time)
-                print(f"Tiempo para eliminar '{libro}': {deletion_time:.20f} segundos")
+                
             end_all_time = time.time()
             all_deletion_time = end_all_time - start_all_time
             
@@ -197,8 +206,14 @@ if __name__ == "__main__":
             print(f"\nTiempo promedio de eliminación: {avg_time:.20f} segundos")
             print(f"Tiempo total para eliminar todos los libros: {all_deletion_time:.20f} segundos")
             
+            
+            
             plt.plot(libro_names, deletion_times, marker='o', linestyle='', color='b', label='Tiempo de eliminación')
             plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
+            x = np.arange(len(libro_names))  # Crear un array con el número de libros
+            y = np.array(deletion_times)  # Convertir los tiempos de eliminación a un array numpy
+            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
+            plt.plot(x, m*x + b, color='g', label='Línea de tendencia')
             plt.xlabel('Libro')
             plt.ylabel('Tiempo (s)')
             plt.title('Tiempos de Eliminación de Libros')
@@ -207,6 +222,79 @@ if __name__ == "__main__":
             plt.tight_layout()
             plt.grid(axis='y')
             plt.show()
+
+        elif opcion == "8":
+            deletion_times = []
+            
+            start_all_time = time.time()
+            for _ in range(len(libros)):
+                libro = random.choice(libros)  # Selecciona un libro aleatorio
+                libros.remove(libro)  # Elimina el libro de la lista de libros
+                
+                start_time = time.perf_counter()
+                lista.eliminar_libro(libro)  # Elimina el libro de la lista enlazada
+                end_time = time.perf_counter()
+                
+                deletion_time = end_time - start_time
+                deletion_times.append(deletion_time)
+                
+            end_all_time = time.time()
+            all_deletion_time = end_all_time - start_all_time
+            
+            avg_time = sum(deletion_times) / len(deletion_times) if deletion_times else 0
+            print(f"\nTiempo promedio de eliminación: {avg_time:.20f} segundos")
+            print(f"Tiempo total para eliminar todos los libros: {all_deletion_time:.20f} segundos")
+            
+            plt.plot(deletion_times, marker='o', linestyle='', color='b', label='Tiempo de eliminación')
+            x = np.arange(len(deletion_times))  # Crear un array con el número de libros
+            y = np.array(deletion_times)  # Convertir los tiempos de eliminación a un array numpy
+            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
+            plt.plot(x, m*x + b, color='g', label='Línea de tendencia')
+            plt.xlabel('Libro')
+            plt.ylabel('Tiempo (s)')
+            plt.title('Tiempos de Eliminación de Libros Aleatorios')
+            plt.legend()
+            plt.xticks([])
+            plt.tight_layout()
+            plt.grid(axis='y')
+            plt.show()
+
+        elif opcion == "9":
+            search_times = []
+            
+            start_all_time = time.time()
+            for _ in range(len(libros)):
+                libro = random.choice(libros)  # Selecciona un libro aleatorio
+                
+                start_time = time.perf_counter()
+                lista.buscar_libro(libro)  # Busca el libro en la lista enlazada
+                end_time = time.perf_counter()
+                
+                search_time = end_time - start_time
+                search_times.append(search_time)
+                
+            end_all_time = time.time()
+            all_search_time = end_all_time - start_all_time
+            
+            avg_time = sum(search_times) / len(search_times) if search_times else 0
+            print(f"\nTiempo promedio de búsqueda: {avg_time:.20f} segundos")
+            print(f"Tiempo total para buscar todos los libros: {all_search_time:.20f} segundos")
+            
+            plt.plot(search_times, marker='o', linestyle='', color='b', label='Tiempo de búsqueda')
+            x = np.arange(len(search_times))  # Crear un array con el número de libros
+            y = np.array(search_times)  # Convertir los tiempos de búsqueda a un array numpy
+            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
+            plt.plot(x, m*x + b, color='g', label='Línea de tendencia')
+            plt.xlabel('Libro')
+            plt.ylabel('Tiempo (s)')
+            plt.title('Tiempos de Búsqueda de Libros Aleatorios')
+            plt.legend()
+            plt.xticks([])
+            plt.tight_layout()
+            plt.grid(axis='y')
+            plt.show()
+
+
         
         else:
             print("Opción no válida. Por favor, intente de nuevo.")
