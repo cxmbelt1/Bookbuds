@@ -1,5 +1,7 @@
-import pandas as pd
+import random
+import string
 import time
+import numpy as np
 import matplotlib.pyplot as plt
 
 class Nodo:
@@ -53,9 +55,12 @@ class ListaLibros:
             actual = actual.siguiente
         print()
 
-def leer_libros_excel(archivo):
-    df = pd.read_excel(archivo)
-    return df['books'].astype(str).tolist()
+def generar_libros_aleatorios(num_libros, longitud_nombre):
+    libros = []
+    for _ in range(num_libros):
+        nombre_libro = ''.join(random.choices(string.ascii_letters + string.digits, k=longitud_nombre))
+        libros.append(nombre_libro)
+    return libros
 
 def menu():
     print("\n--- Menú ---")
@@ -72,54 +77,55 @@ def menu():
 if __name__ == "__main__":
     lista = ListaLibros()
     
-    # Inicio del tiempo de carga total de libros desde Excel
-    total_start_time = time.time()
+    libros = generar_libros_aleatorios(100000, 10)
     
-    libros = leer_libros_excel("1m.xlsx")
-    
-    # Listas para almacenar los tiempos de cada operación de agregar libro y los nombres de los libros
     add_times = []
     libro_names = []
     
+    total_start_time = time.time()
+    
     for libro in libros:
-        # Inicio del tiempo de adición de un libro
-        start_time = time.time()
+        start_time = time.perf_counter()  # Inicia el cronómetro
         
-        lista.agregar_libro(libro)
+        lista.agregar_libro(libro)  # Añade el libro a la lista
         
-        # Fin del tiempo de adición de un libro
-        end_time = time.time()
+        end_time = time.perf_counter()  # Detiene el cronómetro
         
-        # Cálculo del tiempo utilizado para añadir un libro
-        add_time = end_time - start_time
-        add_times.append(add_time)
-        libro_names.append(libro)
+        add_time = end_time - start_time  # Calcula el tiempo que tomó añadir el libro
+        add_times.append(add_time)  # Añade el tiempo a la lista de tiempos
+        libro_names.append(libro)  # Añade el nombre del libro a la lista de nombres
         
-        print(f"Tiempo para añadir el libro '{libro}': {add_time:.8f} segundos")
+        print(f"Tiempo para añadir el libro '{libro}': {add_time:.20f} segundos")
+
     
-    # Fin del tiempo de carga total de libros desde Excel
     total_end_time = time.time()
-    
-    # Cálculo del tiempo total utilizado para cargar y añadir todos los libros
     total_time = total_end_time - total_start_time
     
-    # Cálculo del tiempo promedio utilizado para añadir un libro
     avg_time = sum(add_times) / len(add_times) if add_times else 0
     
-    print(f"\nTiempo promedio para añadir un libro: {avg_time:.8f} segundos")
-    print(f"Tiempo total para cargar y añadir todos los libros: {total_time:.8f} segundos")
+    print(f"\nTiempo promedio para añadir un libro: {avg_time:.20f} segundos")
+    print(f"Tiempo total para cargar y añadir todos los libros: {total_time:.20f} segundos")
     
-    # Gráfica de los tiempos de adición de cada libro
+    plt.figure(figsize=(12, 6))
+
+    # Gráfica de los tiempos de adición
     plt.plot(libro_names, add_times, marker='o', linestyle='', color='b', label='Tiempo de adición')
     plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
+
+    # Calcular y graficar la línea de tendencia
+    x = np.arange(len(libro_names))  # Crear un array con el número de libros
+    y = np.array(add_times)  # Convertir los tiempos de adición a un array numpy
+    m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
+    plt.plot(x, m*x + b, color='g', label='Línea de tendencia')  # Añadir la línea de tendencia a la gráfica
+
     plt.xlabel('Libro')
     plt.ylabel('Tiempo (s)')
     plt.title('Tiempos de Adición de Libros')
     plt.legend()
-    plt.xticks([])
+    plt.xticks([])  
     plt.tight_layout()
+    plt.grid(axis='y')
     plt.show()
-
 
     while True:
         opcion = menu()
@@ -187,13 +193,13 @@ if __name__ == "__main__":
                 deletion_time = end_time - start_time
                 deletion_times.append(deletion_time)
                 total_time += deletion_time
-                print(f"Tiempo para eliminar '{libro}': {deletion_time:.8f} segundos")
+                print(f"Tiempo para eliminar '{libro}': {deletion_time:.12f} segundos")
             end_all_time = time.time()
             all_deletion_time = end_all_time - start_all_time
             
             avg_time = total_time / num_deletions if num_deletions > 0 else 0
-            print(f"\nTiempo promedio de eliminación: {avg_time:.8f} segundos")
-            print(f"Tiempo total para eliminar todos los libros: {all_deletion_time:.8f} segundos")
+            print(f"\nTiempo promedio de eliminación: {avg_time:.12f} segundos")
+            print(f"Tiempo total para eliminar todos los libros: {all_deletion_time:.12f} segundos")
             
             plt.plot(deletion_times, marker='o', linestyle='', color='b', label='Tiempo de eliminación')
             plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
