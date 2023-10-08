@@ -171,7 +171,7 @@ if __name__ == "__main__":
             
             
             
-            plt.plot(libro_names, deletion_times, marker='o', linestyle='', color='b', label='Tiempo de eliminación')
+            plt.plot(libro_names, deletion_times, marker='o', linestyle='', color='c', label='Tiempo de eliminación')
             plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
             x = np.arange(len(libro_names))  # Crear un array con el número de libros
             y = np.array(deletion_times)  # Convertir los tiempos de eliminación a un array numpy
@@ -208,7 +208,7 @@ if __name__ == "__main__":
             print(f"\nTiempo promedio de eliminación: {avg_time:.20f} segundos")
             print(f"Tiempo total para eliminar todos los libros: {all_deletion_time:.20f} segundos")
             
-            plt.plot(deletion_times, marker='o', linestyle='', color='b', label='Tiempo de eliminación')
+            plt.plot(deletion_times, marker='o', linestyle='', color='c', label='Tiempo de eliminación')
             x = np.arange(len(deletion_times))  # Crear un array con el número de libros
             y = np.array(deletion_times)  # Convertir los tiempos de eliminación a un array numpy
             m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
