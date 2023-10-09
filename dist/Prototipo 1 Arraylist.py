@@ -65,7 +65,7 @@ def menu():
 
 
 if __name__ == "__main__":
-    lista = ArrayListLibros()  # Cambiado a la nueva implementación
+    lista = ArrayListLibros()  
     
     libros = generar_libros_aleatorios(10000, 10)
     
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     print(f"\nTiempo promedio para añadir un libro: {avg_time:.20f} segundos")
     print(f"Tiempo total para cargar y añadir todos los libros: {total_time:.20f} segundos")
     
-    # [El resto del código para graficar y manejar el menú se mantiene igual]
+   
 
     
     plt.figure(figsize=(12, 6))
@@ -100,10 +100,10 @@ if __name__ == "__main__":
     plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
 
     # Calcular y graficar la línea de tendencia
-    x = np.arange(len(libro_names))  # Crear un array con el número de libros
-    y = np.array(add_times)  # Convertir los tiempos de adición a un array numpy
-    m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
-    plt.plot(x, m*x + b, color='g', label='Línea de tendencia')  # Añadir la línea de tendencia a la gráfica
+    x = np.arange(len(libro_names))  
+    y = np.array(add_times)  
+    m, b = np.polyfit(x, y, 1)  # Calcular la pendiente 
+    plt.plot(x, m*x + b, color='g', label='Línea de tendencia')  
 
     plt.xlabel('Libro')
     plt.ylabel('Tiempo (s)')
@@ -156,9 +156,9 @@ if __name__ == "__main__":
             
             plt.plot(libro_names, search_times, marker='o', linestyle='', color='c', label='Tiempo de búsqueda')
             plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
-            x = np.arange(len(libro_names))  # Crear un array con el número de libros
-            y = np.array(search_times)  # Convertir los tiempos de búsqueda a un array numpy
-            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
+            x = np.arange(len(libro_names))  
+            y = np.array(search_times)  
+            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente 
             plt.plot(x, m*x + b, color='g', label='Línea de tendencia') 
             plt.xlabel('Libro')
             plt.ylabel('Tiempo (s)')
@@ -195,9 +195,9 @@ if __name__ == "__main__":
             
             plt.plot(libro_names, deletion_times, marker='o', linestyle='', color='c', label='Tiempo de eliminación')
             plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
-            x = np.arange(len(libro_names))  # Crear un array con el número de libros
-            y = np.array(deletion_times)  # Convertir los tiempos de eliminación a un array numpy
-            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
+            x = np.arange(len(libro_names))  
+            y = np.array(deletion_times)  
+            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente
             plt.plot(x, m*x + b, color='g', label='Línea de tendencia')
             plt.xlabel('Libro')
             plt.ylabel('Tiempo (s)')
@@ -231,9 +231,9 @@ if __name__ == "__main__":
             print(f"Tiempo total para eliminar todos los libros: {all_deletion_time:.20f} segundos")
             
             plt.plot(deletion_times, marker='o', linestyle='', color='c', label='Tiempo de eliminación')
-            x = np.arange(len(deletion_times))  # Crear un array con el número de libros
-            y = np.array(deletion_times)  # Convertir los tiempos de eliminación a un array numpy
-            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
+            x = np.arange(len(deletion_times))  
+            y = np.array(deletion_times)  
+            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente 
             plt.plot(x, m*x + b, color='g', label='Línea de tendencia')
             plt.xlabel('Libro')
             plt.ylabel('Tiempo (s)')
@@ -266,9 +266,9 @@ if __name__ == "__main__":
             print(f"Tiempo total para buscar todos los libros: {all_search_time:.20f} segundos")
             
             plt.plot(search_times, marker='o', linestyle='', color='b', label='Tiempo de búsqueda')
-            x = np.arange(len(search_times))  # Crear un array con el número de libros
-            y = np.array(search_times)  # Convertir los tiempos de búsqueda a un array numpy
-            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente y la intersección y de la línea de tendencia
+            x = np.arange(len(search_times))  
+            y = np.array(search_times)  
+            m, b = np.polyfit(x, y, 1)  # Calcular la pendiente 
             plt.plot(x, m*x + b, color='g', label='Línea de tendencia')
             plt.xlabel('Libro')
             plt.ylabel('Tiempo (s)')
