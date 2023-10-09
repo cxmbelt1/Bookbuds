@@ -7,19 +7,40 @@ import matplotlib.pyplot as plt
 class ArrayListLibros:
     def __init__(self):
         self.libros = []
+        self.size = 0
 
     def agregar_libro(self, libro):
-        self.libros.append(libro)
+        if self.size == len(self.libros):
+            new_libros = [None] * (self.size + 1)
+            for i in range(self.size):
+                new_libros[i] = self.libros[i]
+            self.libros = new_libros
+        self.libros[self.size] = libro
+        self.size += 1
 
     def eliminar_libro(self, libro):
-        if libro in self.libros:
-            self.libros.remove(libro)
+        found_index = -1
+        for i in range(self.size):
+            if self.libros[i] == libro:
+                found_index = i
+                break
+        
+        if found_index != -1:
+            for i in range(found_index, self.size - 1):
+                self.libros[i] = self.libros[i + 1]
+            self.libros[self.size - 1] = None
+            self.size -= 1
 
     def buscar_libro(self, libro):
-        return libro in self.libros
+        for i in range(self.size):
+            if self.libros[i] == libro:
+                return True
+        return False
 
     def imprimir_lista(self):
-        print(" ".join(self.libros))
+        for i in range(self.size):
+            print(self.libros[i], end=" ")
+        print()
 
 def generar_libros_aleatorios(num_libros, longitud_nombre):
     libros = []
@@ -42,10 +63,11 @@ def menu():
     opcion = input("Seleccione una opción: ")
     return opcion
 
+
 if __name__ == "__main__":
     lista = ArrayListLibros()  # Cambiado a la nueva implementación
     
-    libros = generar_libros_aleatorios(1000000, 10)
+    libros = generar_libros_aleatorios(10000, 10)
     
     add_times = []
     libro_names = []
