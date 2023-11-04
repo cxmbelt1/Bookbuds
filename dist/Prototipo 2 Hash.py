@@ -4,196 +4,93 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
-class AVLNode:
+class HashNode:
     def __init__(self, key):
         self.key = key
-        self.left = None
-        self.right = None
-        self.height = 1
+        self.next = None
 
-class AVLTree:
-    def insert(self, root, key):
-        # Paso 1: Realizar la inserción normal de BST
-        if not root:
-            return AVLNode(key)
-        elif key < root.key:
-            root.left = self.insert(root.left, key)
+class HashTable:
+    def __init__(self, capacity=1000):
+        self.capacity = capacity
+        self.size = 0
+        self.buckets = [None] * self.capacity
+
+    def hash(self, key):
+        hashsum = 0
+        for idx, c in enumerate(key):
+            hashsum += (idx + len(key)) ** ord(c)
+            hashsum = hashsum % self.capacity
+        return hashsum
+
+    def insert(self, key):
+        self.size += 1
+        index = self.hash(key)
+        node = self.buckets[index]
+        if node is None:
+            self.buckets[index] = HashNode(key)
+            return
+        prev = node
+        while node is not None:
+            prev = node
+            node = node.next
+        prev.next = HashNode(key)
+
+    def delete(self, key):
+        index = self.hash(key)
+        node = self.buckets[index]
+        prev = None
+        while node is not None and node.key != key:
+            prev = node
+            node = node.next
+        if node is None:
+            return None
         else:
-            root.right = self.insert(root.right, key)
+            self.size -= 1
+            result = node
+            if prev is None:
+                self.buckets[index] = node.next
+            else:
+                prev.next = prev.next.next
+            return result
 
-        # Paso 2: Actualizar la altura del ancestro del nodo actual
-        root.height = 1 + max(self.getHeight(root.left),
-                              self.getHeight(root.right))
-
-        # Paso 3: Obtener el factor de balance
-        balance = self.getBalance(root)
-
-        # Paso 4: Si el nodo está desequilibrado, entonces se hacen los ajustes
-        # Caso 1 - Izquierda Izquierda
-        if balance > 1 and key < root.left.key:
-            return self.rightRotate(root)
-
-        # Caso 2 - Derecha Derecha
-        if balance < -1 and key > root.right.key:
-            return self.leftRotate(root)
-
-        # Caso 3 - Izquierda Derecha
-        if balance > 1 and key > root.left.key:
-            root.left = self.leftRotate(root.left)
-            return self.rightRotate(root)
-
-        # Caso 4 - Derecha Izquierda
-        if balance < -1 and key < root.right.key:
-            root.right = self.rightRotate(root.right)
-            return self.leftRotate(root)
-
-        return root
-
-    def delete(self, root, key):
-        # Paso 1: Realizar la eliminación normal de BST
-        if not root:
-            return root
-
-        elif key < root.key:
-            root.left = self.delete(root.left, key)
-
-        elif key > root.key:
-            root.right = self.delete(root.right, key)
-
-        else:
-            if root.left is None:
-                temp = root.right
-                root = None
-                return temp
-            elif root.right is None:
-                temp = root.left
-                root = None
-                return temp
-
-            temp = self.getMinValueNode(root.right)
-            root.key = temp.key
-            root.right = self.delete(root.right, temp.key)
-
-        # Si el árbol tenía solo un nodo, entonces retornar
-        if root is None:
-            return root
-
-        # Paso 2: Actualizar la altura del ancestro del nodo actual
-        root.height = 1 + max(self.getHeight(root.left),
-                              self.getHeight(root.right))
-
-        # Paso 3: Obtener el factor de balance
-        balance = self.getBalance(root)
-
-        # Paso 4: Si el nodo está desequilibrado, se hacen los ajustes
-        # Caso 1 - Izquierda Izquierda
-        if balance > 1 and self.getBalance(root.left) >= 0:
-            return self.rightRotate(root)
-
-        # Caso 2 - Derecha Derecha
-        if balance < -1 and self.getBalance(root.right) <= 0:
-            return self.leftRotate(root)
-
-        # Caso 3 - Izquierda Derecha
-        if balance > 1 and self.getBalance(root.left) < 0:
-            root.left = self.leftRotate(root.left)
-            return self.rightRotate(root)
-
-        # Caso 4 - Derecha Izquierda
-        if balance < -1 and self.getBalance(root.right) > 0:
-            root.right = self.rightRotate(root.right)
-            return self.leftRotate(root)
-
-        return root
-
-    def leftRotate(self, z):
-        y = z.right
-        T2 = y.left
-        y.left = z
-        z.right = T2
-        z.height = 1 + max(self.getHeight(z.left),
-                           self.getHeight(z.right))
-        y.height = 1 + max(self.getHeight(y.left),
-                           self.getHeight(y.right))
-        return y
-
-    def rightRotate(self, y):
-        x = y.left
-        T2 = x.right
-        x.right = y
-        y.left = T2
-        y.height = 1 + max(self.getHeight(y.left),
-                           self.getHeight(y.right))
-        x.height = 1 + max(self.getHeight(x.left),
-                           self.getHeight(x.right))
-        return x
-
-    def getHeight(self, root):
-        if not root:
-            return 0
-        return root.height
-
-    def getBalance(self, root):
-        if not root:
-            return 0
-        return self.getHeight(root.left) - self.getHeight(root.right)
-    
-    def get_element_count(self, root):
-        if not root:
-            return 0
-        return 1 + self.get_element_count(root.left) + self.get_element_count(root.right)
-    
-    def getMinValueNode(self, root):
-        if root is None or root.left is None:
-            return root
-        return self.getMinValueNode(root.left)
-
-    def preOrder(self, root):
-        if not root:
-            return []
-        result = [root.key]
-        result.extend(self.preOrder(root.left))
-        result.extend(self.preOrder(root.right))
-        return result
-
-
-# Ahora, usaremos el árbol AVL para el almacenamiento en lugar de ArrayList
-class Storage:
-    def __init__(self):
-        self.avl_tree = AVLTree()
-        self.root = None
-
-    def add(self, number):
-        self.root = self.avl_tree.insert(self.root, number)
-
-    def remove(self, number):
-        self.root = self.avl_tree.delete(self.root, number)
+    def search(self, key):
+        index = self.hash(key)
+        node = self.buckets[index]
+        while node is not None and node.key != key:
+            node = node.next
+        return node is not None
 
     def get_all_elements(self):
-        return self.avl_tree.preOrder(self.root)
-    
+        elements = []
+        for item in self.buckets:
+            while item is not None:
+                elements.append(item.key)
+                item = item.next
+        return elements
+
+
+
+class Storage:
+    def __init__(self):
+        self.hash_table = HashTable()
+
+    def add(self, key):
+        self.hash_table.insert(key)
+
+    def remove(self, key):
+        self.hash_table.delete(key)
+
+    def search(self, key):
+        return self.hash_table.search(key)
+
+    def get_all_elements(self):
+        return self.hash_table.get_all_elements()
+
     def imprimir_lista(self):
         elements = self.get_all_elements()
         for element in elements:
             print(element)
-    
-    def search(self, key):
-        return self._search_recursive(self.root, key)
 
-    def _search_recursive(self, node, key):
-        if node is None:
-            return False
-        if key == node.key:
-            return True
-        elif key < node.key:
-            return self._search_recursive(node.left, key)
-        else:
-            return self._search_recursive(node.right, key)
-        
-    def get_all_elements(self):
-        return self.avl_tree.preOrder(self.root)
-
-# Resto del código sigue igual, pero la instancia de Storage será ahora un AVL Tree
 
 def generar_libros_aleatorios(num_libros, longitud_nombre):
     libros = []
