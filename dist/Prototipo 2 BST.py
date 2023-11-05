@@ -4,93 +4,83 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
-class HashNode:
+class BSTNode:
     def __init__(self, key):
         self.key = key
-        self.next = None
+        self.left = None
+        self.right = None
 
-class HashTable:
-    def __init__(self, capacity=1000):
-        self.capacity = capacity
-        self.size = 0
-        self.buckets = [None] * self.capacity
-
-    def hash(self, key):
-        hashsum = 0
-        for idx, c in enumerate(key):
-            hashsum += (idx + len(key)) ** ord(c)
-            hashsum = hashsum % self.capacity
-        return hashsum
-
-    def insert(self, key):
-        self.size += 1
-        index = self.hash(key)
-        node = self.buckets[index]
-        if node is None:
-            self.buckets[index] = HashNode(key)
-            return
-        prev = node
-        while node is not None:
-            prev = node
-            node = node.next
-        prev.next = HashNode(key)
-
-    def delete(self, key):
-        index = self.hash(key)
-        node = self.buckets[index]
-        prev = None
-        while node is not None and node.key != key:
-            prev = node
-            node = node.next
-        if node is None:
-            return None
+class BST:
+    def insert(self, root, key):
+        if not root:
+            return BSTNode(key)
+        elif key < root.key:
+            root.left = self.insert(root.left, key)
         else:
-            self.size -= 1
-            result = node
-            if prev is None:
-                self.buckets[index] = node.next
-            else:
-                prev.next = prev.next.next
-            return result
+            root.right = self.insert(root.right, key)
+        return root
 
-    def search(self, key):
-        index = self.hash(key)
-        node = self.buckets[index]
-        while node is not None and node.key != key:
-            node = node.next
-        return node is not None
+    def delete(self, root, key):
+        if not root:
+            return root
+        elif key < root.key:
+            root.left = self.delete(root.left, key)
+        elif key > root.key:
+            root.right = self.delete(root.right, key)
+        else:
+            if root.left is None:
+                return root.right
+            elif root.right is None:
+                return root.left
+            temp = self.getMinValueNode(root.right)
+            root.key = temp.key
+            root.right = self.delete(root.right, temp.key)
+        return root
 
-    def get_all_elements(self):
-        elements = []
-        for item in self.buckets:
-            while item is not None:
-                elements.append(item.key)
-                item = item.next
-        return elements
+    def getMinValueNode(self, root):
+        if root is None or root.left is None:
+            return root
+        return self.getMinValueNode(root.left)
 
-
+    def preOrder(self, root):
+        if not root:
+            return []
+        result = [root.key]
+        result.extend(self.preOrder(root.left))
+        result.extend(self.preOrder(root.right))
+        return result
 
 class Storage:
     def __init__(self):
-        self.hash_table = HashTable()
+        self.bst = BST()
+        self.root = None
 
-    def add(self, key):
-        self.hash_table.insert(key)
+    def add(self, number):
+        self.root = self.bst.insert(self.root, number)
 
-    def remove(self, key):
-        self.hash_table.delete(key)
-
-    def search(self, key):
-        return self.hash_table.search(key)
+    def remove(self, number):
+        self.root = self.bst.delete(self.root, number)
 
     def get_all_elements(self):
-        return self.hash_table.get_all_elements()
-
+        return self.bst.preOrder(self.root)
+    
     def imprimir_lista(self):
         elements = self.get_all_elements()
         for element in elements:
             print(element)
+    
+    def search(self, key):
+        return self._search_recursive(self.root, key)
 
+    def _search_recursive(self, node, key):
+        if node is None:
+            return False
+        if key == node.key:
+            return True
+        elif key < node.key:
+            return self._search_recursive(node.left, key)
+        else:
+            return self._search_recursive(node.right, key)
 
 def generar_libros_aleatorios(num_libros, longitud_nombre):
     libros = []
