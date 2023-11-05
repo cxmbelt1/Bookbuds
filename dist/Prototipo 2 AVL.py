@@ -13,7 +13,7 @@ class AVLNode:
 
 class AVLTree:
     def insert(self, root, key):
-        # Paso 1: Realizar la inserción normal de BST
+
         if not root:
             return AVLNode(key)
         elif key < root.key:
@@ -21,28 +21,25 @@ class AVLTree:
         else:
             root.right = self.insert(root.right, key)
 
-        # Paso 2: Actualizar la altura del ancestro del nodo actual
         root.height = 1 + max(self.getHeight(root.left),
                               self.getHeight(root.right))
 
-        # Paso 3: Obtener el factor de balance
         balance = self.getBalance(root)
 
-        # Paso 4: Si el nodo está desequilibrado, entonces se hacen los ajustes
-        # Caso 1 - Izquierda Izquierda
+        #Izquierda Izquierda
         if balance > 1 and key < root.left.key:
             return self.rightRotate(root)
 
-        # Caso 2 - Derecha Derecha
+        #Derecha Derecha
         if balance < -1 and key > root.right.key:
             return self.leftRotate(root)
 
-        # Caso 3 - Izquierda Derecha
+        #Izquierda Derecha
         if balance > 1 and key > root.left.key:
             root.left = self.leftRotate(root.left)
             return self.rightRotate(root)
 
-        # Caso 4 - Derecha Izquierda
+        #Derecha Izquierda
         if balance < -1 and key < root.right.key:
             root.right = self.rightRotate(root.right)
             return self.leftRotate(root)
@@ -50,7 +47,7 @@ class AVLTree:
         return root
 
     def delete(self, root, key):
-        # Paso 1: Realizar la eliminación normal de BST
+     
         if not root:
             return root
 
@@ -74,32 +71,30 @@ class AVLTree:
             root.key = temp.key
             root.right = self.delete(root.right, temp.key)
 
-        # Si el árbol tenía solo un nodo, entonces retornar
+
         if root is None:
             return root
 
-        # Paso 2: Actualizar la altura del ancestro del nodo actual
         root.height = 1 + max(self.getHeight(root.left),
                               self.getHeight(root.right))
 
-        # Paso 3: Obtener el factor de balance
         balance = self.getBalance(root)
 
-        # Paso 4: Si el nodo está desequilibrado, se hacen los ajustes
-        # Caso 1 - Izquierda Izquierda
+        # Desequilibrado
+        #Izquierda Izquierda
         if balance > 1 and self.getBalance(root.left) >= 0:
             return self.rightRotate(root)
 
-        # Caso 2 - Derecha Derecha
+        #Derecha Derecha
         if balance < -1 and self.getBalance(root.right) <= 0:
             return self.leftRotate(root)
 
-        # Caso 3 - Izquierda Derecha
+        #Izquierda Derecha
         if balance > 1 and self.getBalance(root.left) < 0:
             root.left = self.leftRotate(root.left)
             return self.rightRotate(root)
 
-        # Caso 4 - Derecha Izquierda
+        #Derecha Izquierda
         if balance < -1 and self.getBalance(root.right) > 0:
             root.right = self.rightRotate(root.right)
             return self.leftRotate(root)
@@ -157,7 +152,7 @@ class AVLTree:
         return result
 
 
-# Ahora, usaremos el árbol AVL para el almacenamiento en lugar de ArrayList
+
 class Storage:
     def __init__(self):
         self.avl_tree = AVLTree()
@@ -193,7 +188,7 @@ class Storage:
     def get_all_elements(self):
         return self.avl_tree.preOrder(self.root)
 
-# Resto del código sigue igual, pero la instancia de Storage será ahora un AVL Tree
+
 
 def generar_libros_aleatorios(num_libros, longitud_nombre):
     libros = []
@@ -220,7 +215,7 @@ def menu():
 if __name__ == "__main__":
     lista = Storage()  
     
-    libros = generar_libros_aleatorios(10000, 10)
+    libros = generar_libros_aleatorios(10000000, 10)
     
     add_times = []
     libro_names = []

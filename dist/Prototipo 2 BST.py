@@ -107,7 +107,7 @@ def menu():
 if __name__ == "__main__":
     lista = Storage()  
     
-    libros = generar_libros_aleatorios(10000, 10)
+    libros = generar_libros_aleatorios(1000000, 10)
     
     add_times = []
     libro_names = []
@@ -136,7 +136,7 @@ if __name__ == "__main__":
     plt.figure(figsize=(12, 6))
 
     # Gráfica de los tiempos de adición
-    plt.plot(libro_names, add_times, marker='o', linestyle='', color='c', label='Tiempo de adición')
+    plt.plot(libro_names, add_times, marker='o', linestyle='', color='b', label='Tiempo de adición')
     plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
 
     # Calcular y graficar la línea de tendencia
@@ -194,7 +194,7 @@ if __name__ == "__main__":
 
 
             
-            plt.plot(libro_names, search_times, marker='o', linestyle='', color='c', label='Tiempo de búsqueda')
+            plt.plot(libro_names, search_times, marker='o', linestyle='', color='b', label='Tiempo de búsqueda')
             plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
             x = np.arange(len(libro_names))  
             y = np.array(search_times)  
@@ -233,7 +233,7 @@ if __name__ == "__main__":
             
             
             
-            plt.plot(libro_names, deletion_times, marker='o', linestyle='', color='c', label='Tiempo de eliminación')
+            plt.plot(libro_names, deletion_times, marker='o', linestyle='', color='b', label='Tiempo de eliminación')
             plt.axhline(y=avg_time, color='r', linestyle='--', label='Tiempo promedio')
             x = np.arange(len(libro_names))  
             y = np.array(deletion_times)  
@@ -270,7 +270,7 @@ if __name__ == "__main__":
             print(f"\nTiempo promedio de eliminación: {avg_time:.20f} segundos")
             print(f"Tiempo total para eliminar todos los libros: {all_deletion_time:.20f} segundos")
             
-            plt.plot(deletion_times, marker='o', linestyle='', color='c', label='Tiempo de eliminación')
+            plt.plot(deletion_times, marker='o', linestyle='', color='b', label='Tiempo de eliminación')
             x = np.arange(len(deletion_times))  
             y = np.array(deletion_times)  
             m, b = np.polyfit(x, y, 1)  # Calcular la pendiente 
