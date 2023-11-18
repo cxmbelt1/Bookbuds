@@ -17,7 +17,7 @@ class Libro:
         self.publisher = publisher
 
     def __repr__(self):
-        return f"'{self.title}' by {self.authors}"
+        return f"ID: {self.book_id}, '{self.title}' by {self.authors}"
     
 class BSTNode:
     def __init__(self, key):
@@ -146,10 +146,11 @@ if __name__ == "__main__":
             libros.append(libro)
 
         elif opcion == "2":
-            libro = input("Ingrese el título del libro a eliminar: ")
-            if libro in libros:
-                lista.remove(libro)
-                libros.remove(libro)
+            titulo_libro = input("Ingrese el título del libro a eliminar: ")
+            if titulo_libro in lista.libros_por_titulo:
+                lista.remove(titulo_libro)
+            else:
+                print("El libro no está en la lista.")
 
         elif opcion == "3":
             libro = input("Ingrese el título del libro a buscar: ")
@@ -180,3 +181,5 @@ if __name__ == "__main__":
 
         else:
             print("Opción no válida. Por favor, intente de nuevo.")
+
+
