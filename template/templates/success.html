@@ -1,0 +1,32 @@
+{% extends "layout.html" %} 
+
+<!-- active navbar-->
+{% block active_signin %}
+    active
+{% endblock %}
+<!-- End Navbar -->
+
+<!--Container-->
+{% block body %}
+    <div class="signbg">
+      <img src="{{ url_for('static', filename='assets/image/signbg.jpg') }}">
+
+      <div class="signbox">
+              
+        <form>
+          <!-- showing success message -->
+          {% if success %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                {{success}}
+            </div>
+          {% endif %}
+                
+          <p>click here to <a href="/login">login</a> Your Account</p>
+        
+        </form>
+      </div>
+    </div>
+
+{% endblock %}
+<!--End Container-->

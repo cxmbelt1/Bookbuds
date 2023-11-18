@@ -1,0 +1,78 @@
+{% extends "layout.html" %} 
+
+<!-- active navbar-->
+{% block active_home %}
+    active
+{% endblock %}
+{% block active_home1 %}
+    active
+{% endblock %}
+<!-- End Navbar -->
+
+<!--Container-->
+{% block body %}
+     
+     <!--Carousel-->
+            <div id="mycarousel" class="carousel slide carousel-fade" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    <li data-target="#mycarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#mycarousel" data-slide-to="1"></li>
+                    <li data-target="#mycarousel" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner">
+                    <div class="carousel-item active carousel-inner1">
+                        <img src="{{ url_for('static', filename='assets/image/1.jpg') }}" class="d-block w-100" alt="Image not processed">
+                        <div class="carousel-caption animated bounceInLeft visible" data-animation="bounceInLeft" data-animation-delay="100">
+                            <h1 class="font-pacifico text-capitalize color-light mt-50 text-right">
+                                <span class="alpha10">The Fastest Way to<br>search books</span><br>
+                            </h1>
+                            <p class="color-light text-right mt20 ml10">
+                                e-BookStore 
+                            </p>
+                        </div>
+                    </div>
+                    <div class="carousel-item carousel-inner2">
+                        <img src="{{ url_for('static', filename='assets/image/2.jpg') }}" class="d-block w-100" alt="Image not processed">
+                        <div class="carousel-caption animated bounceInUp visible" data-animation="bounceInUp" data-animation-delay="100">
+                            <h1 class="font-pacifico text-capitalize color-dark mt-25">
+                                The Fastest Way to<br>search books
+                            </h1>
+                            <p class="color-light mt25">
+                                e-BookStore                
+                            </p>
+                        </div>
+                    </div>
+                    <div class="carousel-item carousel-inner3">
+                        <img src="{{ url_for('static', filename='assets/image/3.jpg') }}" class="d-block w-100" alt="Image not processed">
+                        <div class="carousel-caption animated bounceInRight visible" data-animation="bounceInRight" data-animation-delay="100">
+                            <h1 class="font-pacifico text-capitalize color-light mt-50 text-left">
+                                <span class="alpha10">The Fastest Way to<br>search books</span><br>
+                            </h1>
+                            <p class="color-light text-left mt20 ml10">
+                                e-BookStore 
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            
+
+
+                <div class="svg-container-bottom">
+                    <svg id="svgLineTop" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="300" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 2000 300" preserveAspectRatio="xMinYMax">
+                        
+                        <polygon points="-150,450 0,100 600,300 2000,100 5200,450" fill="#fff" stroke="none"></polygon>
+                    </svg>
+                </div>
+
+
+                <a class="carousel-control-prev" href="#mycarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#mycarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+{% endblock %}
+<!--End Container-->

@@ -1,0 +1,49 @@
+{% extends "layout.html" %} 
+
+<!-- active navbar-->
+{% block active_register %}
+    active
+{% endblock %}
+<!-- End Navbar -->
+
+<!--Container-->
+{% block body %}
+        <div class="signbg">
+
+            <!-- Background image -->
+            <img src="{{ url_for('static', filename='assets/image/signbg.jpg') }}">
+            
+            <!-- Register Box -->
+            <div class="signbox">
+                <h3>Register</h3>
+                
+                <form class="register col-sm-12" action="/register" method="post">
+                  
+                  <!-- Error Showing message -->
+                  {% if error %}
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          {{error}}
+                    </div>
+
+                  {% endif %}
+
+                  <!-- Form content -->
+                  <div class="form-group">
+                    <input type="text" class="form-control" name="username" placeholder="Name" autocomplete="off" autofocus >
+                  </div>
+                  
+                  <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Password" name="password" minlength="4" maxlength="8" >
+                  </div>
+
+                  <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Confirm Password" name="confirmation" >
+                  </div>
+
+                  <button type="submit" class="btn btn-primary text-right" id="submit" value="submit">Register</button>
+                </form>
+            </div>
+        </div>
+{% endblock %}
+<!--End Container-->

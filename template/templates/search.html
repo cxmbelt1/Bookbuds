@@ -1,0 +1,44 @@
+
+ {% extends "layout.html" %} 
+
+<!-- active navbar-->
+{% block navbar_class %}
+    nav-search bg-light
+{% endblock %}
+{% block active_signin %}
+    active
+{% endblock %}
+<!-- End Navbar -->
+
+<!--Container-->
+{% block body %}
+    <div>
+        <!-- Search bar and background -->
+        <div class="a">
+            <img src="{{ url_for('static', filename='assets/image/searchhome.jpg') }}">
+            <div class="b">
+                <form action="/book" method="POST" class="navbar-form col-sm-8">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="book" placeholder="Search by ISBN,Title OR Author" aria-label="Search" aria-describedby="search">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit" id="search"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+                <div class="discover">
+                    <p class="font-pacifico">Discover 5000+ Books</p>
+                </div>
+            </div>
+            <div class="c">
+                {% if get_flashed_messages() %}
+                    <div class="alert alert-success alert-dismissible col-sm-12 text-center" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          {{ get_flashed_messages() | join(" ") }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+<!--End Container--> 
+
