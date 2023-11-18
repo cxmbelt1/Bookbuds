@@ -80,10 +80,10 @@ class Storage:
             return self._search_recursive(node.right, key)
 
     def importar_desde_csv(self, archivo_csv):
-        df = pd.read_csv(archivo_csv)
-        for libro in df['title']:  # Usando la columna 'title' para los nombres de los libros
+        df = pd.read_csv(archivo_csv, on_bad_lines='skip')  # Actualización para manejar líneas malformadas
+        for libro in df['title']:
             self.add(libro)
-        return df['title'].tolist()  # Devuelve la lista de libros
+        return df['title'].tolist()
 
 def menu():
     print("\n--- Menú ---")
@@ -99,25 +99,25 @@ def menu():
 if __name__ == "__main__":
     lista = Storage()
 
-    archivo_csv = 'books.csv'  # El archivo CSV
+    # Asegúrate de que el archivo 'books.csv' esté en la misma carpeta que este script
+    archivo_csv = './books.csv'
     libros = lista.importar_desde_csv(archivo_csv)
-
     while True:
         opcion = menu()
 
         if opcion == "1":
-            libro = input("Ingrese el nombre del libro a agregar: ")
+            libro = input("Ingrese el título del libro a agregar: ")
             lista.add(libro)
-            libros.append(libro)  # Añadir a la lista de libros
+            libros.append(libro)
 
         elif opcion == "2":
-            libro = input("Ingrese el nombre del libro a eliminar: ")
+            libro = input("Ingrese el título del libro a eliminar: ")
             if libro in libros:
                 lista.remove(libro)
-                libros.remove(libro)  # Eliminar de la lista de libros
+                libros.remove(libro)
 
         elif opcion == "3":
-            libro = input("Ingrese el nombre del libro a buscar: ")
+            libro = input("Ingrese el título del libro a buscar: ")
             resultado = lista.search(libro)
             print(f"El libro '{libro}' está en la lista:", "Sí" if resultado else "No")
 
@@ -126,7 +126,6 @@ if __name__ == "__main__":
 
         elif opcion == "5":
             search_times = []
-
             start_all_time = time.time()
             for libro in libros:
                 start_time = time.perf_counter()
@@ -134,10 +133,8 @@ if __name__ == "__main__":
                 end_time = time.perf_counter()
                 search_time = end_time - start_time
                 search_times.append(search_time)
-
             end_all_time = time.time()
             all_search_time = end_all_time - start_all_time
-
             avg_time = sum(search_times) / len(search_times) if search_times else 0
             print(f"\nTiempo promedio de búsqueda: {avg_time:.20f} segundos")
             print(f"Tiempo total para buscar todos los libros: {all_search_time:.20f} segundos")
