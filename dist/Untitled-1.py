@@ -1,6 +1,24 @@
 import pandas as pd
 import time
 
+class Libro:
+    def __init__(self, book_id, title, authors, average_rating, isbn, isbn13, language_code, num_pages, ratings_count, text_reviews_count, publication_date, publisher):
+        self.book_id = book_id
+        self.title = title
+        self.authors = authors
+        self.average_rating = average_rating
+        self.isbn = isbn
+        self.isbn13 = isbn13
+        self.language_code = language_code
+        self.num_pages = num_pages
+        self.ratings_count = ratings_count
+        self.text_reviews_count = text_reviews_count
+        self.publication_date = publication_date
+        self.publisher = publisher
+
+    def __repr__(self):
+        return f"'{self.title}' by {self.authors}"
+    
 class BSTNode:
     def __init__(self, key):
         self.key = key
@@ -51,39 +69,56 @@ class Storage:
     def __init__(self):
         self.bst = BST()
         self.root = None
+        self.libros = []
+        self.libros_por_titulo = {}
 
-    def add(self, key):
-        self.root = self.bst.insert(self.root, key)
+    def add(self, libro):
+        self.root = self.bst.insert(self.root, libro.title)
+        self.libros.append(libro)
+        self.libros_por_titulo[libro.title] = libro
 
-    def remove(self, key):
-        self.root = self.bst.delete(self.root, key)
+    def remove(self, title):
+        self.root = self.bst.delete(self.root, title)
+        libro_a_eliminar = self.libros_por_titulo.pop(title, None)
+        if libro_a_eliminar:
+            self.libros.remove(libro_a_eliminar)
 
-    def get_all_elements(self):
-        return self.bst.preOrder(self.root)
-    
-    def imprimir_lista(self):
-        elements = self.get_all_elements()
-        for element in elements:
-            print(element)
+    def search(self, title):
+        return self._search_recursive(self.root, title)
 
-    def search(self, key):
-        return self._search_recursive(self.root, key)
-
-    def _search_recursive(self, node, key):
+    def _search_recursive(self, node, title):
         if node is None:
             return False
-        if key == node.key:
+        if title == node.key:
             return True
-        elif key < node.key:
-            return self._search_recursive(node.left, key)
+        elif title < node.key:
+            return self._search_recursive(node.left, title)
         else:
-            return self._search_recursive(node.right, key)
+            return self._search_recursive(node.right, title)
+
+    def imprimir_lista(self):
+        for libro in self.libros:
+            print(libro)
 
     def importar_desde_csv(self, archivo_csv):
-        df = pd.read_csv(archivo_csv, on_bad_lines='skip')  # Actualización para manejar líneas malformadas
-        for libro in df['title']:
+        df = pd.read_csv(archivo_csv, on_bad_lines='skip')
+        for _, row in df.iterrows():
+            libro = Libro(
+                book_id=row['bookID'],
+                title=row['title'],
+                authors=row['authors'],
+                average_rating=row['average_rating'],
+                isbn=row['isbn'],
+                isbn13=row['isbn13'],
+                language_code=row['language_code'],
+                num_pages=row['  num_pages'],
+                ratings_count=row['ratings_count'],
+                text_reviews_count=row['text_reviews_count'],
+                publication_date=row['publication_date'],
+                publisher=row['publisher']
+            )
             self.add(libro)
-        return df['title'].tolist()
+
 
 def menu():
     print("\n--- Menú ---")
