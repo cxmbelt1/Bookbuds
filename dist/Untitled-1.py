@@ -65,7 +65,7 @@ class Storage:
         elements = self.get_all_elements()
         for element in elements:
             print(element)
-    
+
     def search(self, key):
         return self._search_recursive(self.root, key)
 
