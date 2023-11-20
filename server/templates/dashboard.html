@@ -5,73 +5,41 @@
 {% block content %}
 
 <div class="container shadow p-4 mb-5 bg-body-tertiary rounded">
-        <div class="row">
-            <div class="col">
-                <h3>Mi Lista <i class="bi bi-book"></i></h3>
-            </div>
+    <div class="row">
+        <div class="col">
+            <h3>Mi Lista <i class="bi bi-book"></i></h3>
         </div>
-        <div class="row">
-            <div class="col-12 px-3 py-1 border bg-white rounded">
-                <div class="row">
-                    <div class="col-1">
-                        1.
-                    </div>
-                    <div class="col-6 border-start">
-                        100 años de soledad
-                        <i class="bi bi-pencil-square"></i>
-                    </div>
-                    <div class="col border-start">
-                        Agregar review
-                    </div>
-                    <div class="col-1 border-start">
-                        <i class="bi bi-check2-square"></i>
-                        <i class="bi bi-trash"></i>
-                    </div>
+    </div>
+    <div class="row">
+        <!-- Dynamic book list starts here -->
+        {% for title in book_titles %}
+        <div class="col-12 px-3 py-1 border bg-white rounded">
+            <div class="row">
+                <div class="col-1">
+                    {{ loop.index }}.
                 </div>
-            </div>
-            <div class="col-12 px-3 py-1 border bg-white rounded">
-                <div class="row">
-                    <div class="col-1">
-                        2. 
-                    </div>
-                    <div class="col-6 border-start">
-                        La ciudad y los perros
-                        <i class="bi bi-pencil-square"></i>
-                    </div>
-                    <div class="col border-start">
-                        Ver review
-                    </div>
-                    <div class="col-1 border-start">
-                        <i class="bi bi-check2-square"></i>
-                        <i class="bi bi-trash"></i>
-                    </div>
+                <div class="col-6 border-start">
+                    {{ title }}
+                    <i class="bi bi-pencil-square"></i>
                 </div>
-            </div>
-            <div class="col-12 px-3 py-1 border bg-white rounded">
-                <div class="row">
-                    <div class="col-1">
-                        3.
-                    </div>
-                    <div class="col-6 border-start">
-                        Rayuela
-                        <i class="bi bi-pencil-square"></i>
-                    </div>
-                    <div class="col border-start">
-                        Agregar review
-                    </div>
-                    <div class="col-1 border-start">
-                        <i class="bi bi-check2-square"></i>
-                        <i class="bi bi-trash"></i>
-                    </div>
+                <div class="col border-start">
+                    Agregar review
+                </div>
+                <div class="col-1 border-start">
+                    <i class="bi bi-check2-square"></i>
+                    <i class="bi bi-trash"></i>
                 </div>
             </div>
         </div>
-        <div class="row mt-4">
-            <div class="col">
-                <a class="btn btn-dark" role="button" aria-disabled="true">Agregar Libro</a>
-                <a class="btn btn-warning" role="button" aria-disabled="true">Ver mis libros sin reseña</a>
-            </div>
+        {% endfor %}
+        <!-- Dynamic book list ends here -->
+    </div>
+    <div class="row mt-4">
+        <div class="col">
+            <a class="btn btn-dark" role="button" aria-disabled="true">Agregar Libro</a>
+            <a class="btn btn-warning" role="button" aria-disabled="true">Ver mis libros sin reseña</a>
         </div>
+    </div>
 </div>
 
 <div class="container">
