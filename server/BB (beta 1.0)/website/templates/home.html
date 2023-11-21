@@ -1,1 +1,21 @@
-{% extends "base.html" %} {% block title %}BookBuds{% endblock %}
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+    %}
+    <h1 align="center">books</h1>
+    <ul class="list-group list-group-flush" id="books">
+      {% for book in user.books %}
+      <li class="list-group-item">
+        {{ book.data }}
+        <button type="button" class="close" onClick="deleteBook({{ book.id }})">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </li>
+      {% endfor %}
+    </ul>
+    <form method="POST">
+      <textarea name="book" id="book" class="form-control"></textarea>
+      <br />
+      <div align="center">
+        <button type="submit" class="btn btn-primary">Add Book</button>
+      </div>
+    </form>
+    {% endblock %}
