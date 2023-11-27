@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
-from .models import Book
+from .models import Note
 from . import db
 import json
 
@@ -11,27 +11,27 @@ views = Blueprint('views', __name__)
 @login_required
 def home():
     if request.method == 'POST': 
-        book = request.form.get('book')
+        note = request.form.get('note')#Gets the note from the HTML 
 
-        if len(book) < 1:
-            flash('Book is too short!', category='error') 
+        if len(note) < 1:
+            flash('Note is too short!', category='error') 
         else:
-            new_book = Book(data=book, user_id=current_user.id)  
-            db.session.add(new_book) 
+            new_note = Note(data=note, user_id=current_user.id)  #providing the schema for the note 
+            db.session.add(new_note) #adding the note to the database 
             db.session.commit()
-            flash('Book added!', category='success')
+            flash('Note added!', category='success')
 
     return render_template("home.html", user=current_user)
 
 
-@views.route('/delete-book', methods=['POST'])
-def delete_book():  
-    book = json.loads(request.data) 
-    bookId = book['bookId']
-    book = Book.query.get(bookId)
-    if book:
-        if book.user_id == current_user.id:
-            db.session.delete(book)
+@views.route('/delete-note', methods=['POST'])
+def delete_note():  
+    note = json.loads(request.data) # this function expects a JSON from the INDEX.js file 
+    noteId = note['noteId']
+    note = Note.query.get(noteId)
+    if note:
+        if note.user_id == current_user.id:
+            db.session.delete(note)
             db.session.commit()
 
     return jsonify({})
