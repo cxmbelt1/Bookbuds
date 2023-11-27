@@ -5,40 +5,44 @@ content %}
   <div class="form-group">
     <label for="email">Email Address</label>
     <input
-      type="text"
+      type="email"
+      class="form-control"
       id="email"
       name="email"
-      class="form-control"
-      placeholder="Enter Email"
+      placeholder="Enter email"
     />
-    <label for="username">Username</label>
+  </div>
+  <div class="form-group">
+    <label for="firstName">First Name</label>
     <input
       type="text"
-      id="username"
-      name="username"
       class="form-control"
-      placeholder="Enter Username"
+      id="firstName"
+      name="firstName"
+      placeholder="Enter first name"
     />
+  </div>
+  <div class="form-group">
     <label for="password1">Password</label>
     <input
       type="password"
+      class="form-control"
       id="password1"
       name="password1"
-      class="form-control"
-      placeholder="Enter Password"
+      placeholder="Enter password"
     />
-    <label for="password2">Password Again</label>
+  </div>
+  <div class="form-group">
+    <label for="password2">Password (Confirm)</label>
     <input
       type="password"
+      class="form-control"
       id="password2"
       name="password2"
-      class="form-control"
-      placeholder="Enter Password Again"
+      placeholder="Confirm password"
     />
-    <br />
-    <div align="center">
-      <button class="btn btn-primary" type="submit">Sign Up</button>
-    </div>
   </div>
+  <br />
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 {% endblock %}

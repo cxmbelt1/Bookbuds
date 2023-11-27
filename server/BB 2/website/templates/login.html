@@ -5,24 +5,24 @@
   <div class="form-group">
     <label for="email">Email Address</label>
     <input
-      type="text"
+      type="email"
+      class="form-control"
       id="email"
       name="email"
-      class="form-control"
-      placeholder="Enter Email"
+      placeholder="Enter email"
     />
+  </div>
+  <div class="form-group">
     <label for="password">Password</label>
     <input
       type="password"
+      class="form-control"
       id="password"
       name="password"
-      class="form-control"
-      placeholder="Enter Password"
+      placeholder="Enter password"
     />
-    <br />
-    <div align="center">
-      <button class="btn btn-primary" type="submit">Login</button>
-    </div>
   </div>
+  <br />
+  <button type="submit" class="btn btn-primary">Login</button>
 </form>
 {% endblock %}

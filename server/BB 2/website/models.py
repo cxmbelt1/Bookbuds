@@ -1,7 +1,14 @@
 from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
+import pandas as pd
 
+class Book(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    isbn = db.Column(db.String(150), unique=True)
+    title = db.Column(db.String(500))
+    author = db.Column(db.String(300))
+    year = db.Column(db.Integer)
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
