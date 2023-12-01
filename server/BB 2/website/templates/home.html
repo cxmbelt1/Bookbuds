@@ -1,11 +1,6 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
 %}
-<div class="search-bar">
-  <form action="{{ url_for('views.search_user') }}" method="GET">
-    <input type="text" name="query" placeholder="Buscar persona por nombre...">
-    <button type="submit">Buscar</button>
-</form>
-</div>
+
 
 <h1 align="center">Notes</h1>
 <ul class="list-group list-group-flush" id="notes">
