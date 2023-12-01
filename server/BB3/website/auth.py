@@ -69,10 +69,3 @@ def sign_up():
 def profile():
 
     return render_template("profile.html", user=current_user)
-
-@auth.route('/idlibro', methods=['GET', 'POST'])
-def idlibro():
-
-    return render_template("profile.html", user=current_user)
-
-

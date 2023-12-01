@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        .profile-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .profile-field {
+            font-size: 16px;
+            line-height: 1.6;
+        }        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .user-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <img src="{{ url_for('static', filename='./image.jpg') }}" alt="User Image" class="user-image">
+            <h1 class="profile-title">User Profile</h1>
+        </div>
+        <div class="profile-info">
+            <p class="profile-field"><strong>ID:</strong> {{ user.id }}</p>
+            <p class="profile-field"><strong>First Name:</strong> {{ user.first_name }}</p>
+            <p class="profile-field"><strong>Email:</strong> {{ user.email }}</p>
+
+        </div>
+    </div>
+{% endblock %}
