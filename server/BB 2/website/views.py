@@ -1,12 +1,19 @@
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
 from .models import Note
-from .models import User
+from .models import User, Book
 from . import db
 import json
 from flask import redirect, url_for
 
 views = Blueprint('views', __name__)
+
+
+
+@views.route('/book/<isbn>')
+def book(isbn):
+    book = Book.query.filter_by(isbn=isbn).first_or_404()
+    return render_template('book.html', book=book, user=current_user)
 
 
 @views.route('/', methods=['GET', 'POST'])
