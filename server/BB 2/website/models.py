@@ -3,12 +3,18 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 import pandas as pd
 
+user_books = db.Table('user_books',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('book_id', db.Integer, db.ForeignKey('book.id'))
+)
+
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     isbn = db.Column(db.String(150), unique=True)
     title = db.Column(db.String(500))
     author = db.Column(db.String(300))
     year = db.Column(db.Integer)
+    alreadyRead = db.Column(db.Boolean, default=False)
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -16,13 +22,13 @@ class Note(db.Model):
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
     notes = db.relationship('Note')
+    books = db.relationship('Book', secondary=user_books, backref=db.backref('users', lazy='dynamic'))  # New relationship
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
