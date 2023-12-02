@@ -24,4 +24,16 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(150))
     notes = db.relationship('Note')
 
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    book_isbn = db.Column(db.String(150), db.ForeignKey('book.isbn'))
+    user_email = db.Column(db.String(150), db.ForeignKey('user.email'))
+    review = db.Column(db.String(5000))
+    rating = db.Column(db.Integer)
+    date = db.Column(db.DateTime(timezone=True), default=func.now())
+    likes = db.relationship('Like', backref='review', lazy='dynamic')
 
+class Like(db.Model):
+    __tablename__ = 'likes'
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    review_id = db.Column(db.Integer, db.ForeignKey('review.id'), primary_key=True)

@@ -1,19 +1,95 @@
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
 from .models import Note
-from .models import User, Book
+from .models import User, Book, Review, Like
 from . import db
 import json
 from flask import redirect, url_for
+from sqlalchemy import desc, func
+import requests
+import json
+
 
 views = Blueprint('views', __name__)
 
+def get_book_cover(isbn):
+    return f'https://covers.openlibrary.org/b/isbn/{isbn}-L.jpg'
 
-
-@views.route('/book/<isbn>')
+@views.route('/book/<isbn>', methods=['GET', 'POST'])
+@login_required
 def book(isbn):
     book = Book.query.filter_by(isbn=isbn).first_or_404()
-    return render_template('book.html', book=book, user=current_user)
+    cover_url = get_book_cover(isbn)  # Llama a la función aquí
+
+    reviewed = False
+    invalid_feedback = False
+
+    if request.method == "POST":
+        review = request.form.get("review")
+        rating = request.form.get("rating")
+
+        if review == "" or rating is None:
+            invalid_feedback = "Todos los campos son requeridos."
+            pass
+       
+        elif Review.query.filter_by(book_isbn=isbn, user_email=current_user.email).first():
+            reviewed = "Ya hiciste una review para este libro :p ."
+
+        else:
+            new_review = Review(book_isbn=book.isbn, user_email=current_user.email, review=review, rating=rating)
+            db.session.add(new_review)
+            db.session.commit()
+
+    # Para ordenar por cantidad de "likes"
+    reviews = Review.query.filter_by(book_isbn=book.isbn).outerjoin(Like).group_by(Review.id).order_by(func.count(Like.user_id).desc()).all()
+
+    return render_template('book.html', book=book, user=current_user, reviews=reviews, reviewed=reviewed, invalid_feedback=invalid_feedback, cover_url=cover_url)  # Pasa la URL de la imagen a tu plantillareturn render_template('book.html', book=book, user=current_user, reviews=reviews, reviewed=reviewed, invalid_feedback=invalid_feedback)
+
+
+@views.route('/edit_review/<int:review_id>', methods=['GET', 'POST'])
+@login_required
+def edit_review(review_id):
+    review = Review.query.get(review_id)
+    if review and review.user_email == current_user.email:
+        if request.method == 'POST':
+            new_review_text = request.form.get('review')
+            new_rating = request.form.get('rating')
+            if new_review_text and new_rating:
+                review.review = new_review_text
+                review.rating = new_rating
+                db.session.commit()
+                flash('Tu reseña ha sido actualizada!', category='success')
+            else:
+                flash('Completa todos los campos!', category='error')
+            return redirect(url_for('views.book', isbn=review.book_isbn))
+        return render_template('edit_review.html', review=review)
+    else:
+        flash('No tienes permiso para editar esta review.', category='error')
+        return redirect(url_for('views.home'))
+
+@views.route('/review/<int:review_id>/like', methods=['POST'])
+@login_required
+def like_review(review_id):
+    review = Review.query.get_or_404(review_id)
+    like = Like.query.filter_by(user_id=current_user.id, review_id=review.id).first()
+    if like is None:
+        like = Like(user_id=current_user.id, review_id=review.id)
+        db.session.add(like)
+    else:
+        db.session.delete(like)
+    db.session.commit()
+    return redirect(url_for('views.book', isbn=review.book_isbn))
+
+
+@views.route('/delete_review/<int:review_id>', methods=['POST'])
+@login_required
+def delete_review(review_id):
+    review = Review.query.get(review_id)
+    if review and review.user_email == current_user.email:
+        Like.query.filter_by(review_id=review.id).delete()
+        db.session.delete(review)
+        db.session.commit()
+    return redirect(url_for('views.book', isbn=review.book_isbn))
 
 
 @views.route('/', methods=['GET', 'POST'])
