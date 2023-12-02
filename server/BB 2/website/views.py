@@ -108,21 +108,28 @@ def delete_review(review_id):
         db.session.commit()
     return redirect(url_for('views.book', isbn=review.book_isbn))
 
+@views.route('/get_suggestions', methods=['GET', 'POST'])
+def get_suggestions():
+    input = request.form.get('input')
+    suggestions = Book.query.filter(Book.title.ilike('%' + input + '%')).all()
+    return jsonify([{'title': book.title, 'id': book.id} for book in suggestions])
 
-@views.route('/', methods=['GET', 'POST'])
+@views.route('/index', methods=['GET', 'POST'])
 @login_required
-def home():
-    if request.method == 'POST': 
-        note = request.form.get('note')
-        if len(note) < 1:
-            flash('Note is too short!', category='error') 
-        else:
-            new_note = Note(data=note, user_id=current_user.id)  
-            db.session.add(new_note) 
-            db.session.commit()
-            flash('Note added!', category='success')
+def index():
+    if request.method == 'POST':
+        book_id = request.form.get('book_id')
+        if book_id:
+            book = Book.query.filter_by(id=book_id).first()
+            if book and book not in current_user.books:
+                current_user.books.append(book)
+                db.session.commit()
+        return redirect(url_for('views.index'))
+    books = Book.query.all()
+    return render_template('index.html', user=current_user, books=books)
 
-    return render_template("home.html", user=current_user)
+
+
 
 
 @views.route('/delete-note', methods=['POST'])

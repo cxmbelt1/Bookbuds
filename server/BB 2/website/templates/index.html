@@ -1,0 +1,22 @@
+{% extends "base.html" %} 
+{% block title %}Home{% endblock %} 
+{% block content %}
+
+<!-- Lista de libros agregados al perfil -->
+<h2>Libros en mi perfil:</h2>
+<ul id="listaLibrosPerfil">
+    {% for book in current_user.books %}
+        <li>{{ book.title }}</li>
+    {% endfor %}
+</ul>
+
+<!-- Form for adding books -->
+<form method="POST">
+  <select name="book_id">
+      {% for book in books %}
+          <option value="{{ book.id }}">{{ book.title }}</option>
+      {% endfor %}
+  </select>
+  <button type="submit">Add book to my profile</button>
+</form>
+{% endblock %}
