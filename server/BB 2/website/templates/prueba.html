@@ -20,6 +20,7 @@
     </div>
 
     {% for book in current_user.books | reverse %}
+    
     <div class="row">
         <div class="col-12 px-3 py-1 border bg-white rounded">
             <div class="row">
@@ -32,10 +33,7 @@
                 </div>
                 <div class="col-1 border-start">
                     <i class="bi bi-check2-square cursor-pointer"></i>
-                    <form method="POST" action="{{ url_for('views.delete_book') }}">
-                        <input type="hidden" name="book_id" value="{{ book.id }}">
-                        <button type="submit" class="fa fa-trash cursor-pointer"></button>
-                    </form>
+                    <button class="fa fa-trash cursor-pointer" onclick="eliminarLibro({{book.id}})"></button> 
                 </div>
             </div>
         </div>
@@ -43,5 +41,14 @@
     {% endfor %}
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+function eliminarLibro(bookId) {
+    $.post('/delete_book/' + bookId, function() {
+        alert('Libro eliminado de tu perfil');  // Muestra una alerta
+        location.reload();  // Recarga la página después de eliminar el libro
+    });
+}
+</script>
 
 {% endblock %}

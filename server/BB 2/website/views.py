@@ -63,6 +63,8 @@ def book(isbn, sort, order):
         reviews = Review.query.filter_by(book_isbn=book.isbn).all()
 
     return render_template('book.html', book=book, user=current_user, reviews=reviews, reviewed=reviewed, invalid_feedback=invalid_feedback, cover_url=cover_url)
+
+
 @views.route('/edit_review/<int:review_id>', methods=['GET', 'POST'])
 @login_required
 def edit_review(review_id):
@@ -129,8 +131,16 @@ def index():
     return render_template('index.html', user=current_user, books=books)
 
 
-
-
+@views.route('/delete_book', methods=['POST'])
+@login_required
+def delete_book():
+    book_id = request.form.get('book_id')
+    if book_id:
+        book = Book.query.filter_by(id=book_id).first()
+        if book and book in current_user.books:
+            current_user.books.remove(book)
+            db.session.commit()
+    return redirect(url_for('views.index'))
 
 @views.route('/delete-note', methods=['POST'])
 def delete_note():  
