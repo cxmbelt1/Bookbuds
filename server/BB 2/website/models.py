@@ -14,6 +14,7 @@ class Book(db.Model):
     title = db.Column(db.String(500))
     author = db.Column(db.String(300))
     year = db.Column(db.Integer)
+    alreadyRead = db.Column(db.Boolean, default=False)
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)

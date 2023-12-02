@@ -2,17 +2,7 @@
 {% block title %}Home{% endblock %} 
 {% block content %}
 
-<div class="container shadow p-4 mb-5 bg-body rounded">
-    <!-- Form for adding books -->
-    <form method="POST">
-      <select name="book_id">
-          {% for book in books %}
-              <option value="{{ book.id }}">{{ book.title }}</option>
-          {% endfor %}
-      </select>
-      <button type="submit">Add book to my profile</button>
-    </form>
-
+<div class="container shadow p-4 mb-5 bg-body rounded col-10">
     <div class="row">
         <div class="col" name="tituloDeLista">
             <h3>Mi Lista <i class="bi bi-book"></i></h3>
@@ -20,28 +10,62 @@
     </div>
 
     {% for book in current_user.books | reverse %}
-    <div class="row">
-        <div class="col-12 px-3 py-1 border bg-white rounded">
+    <div class="row border rounded {{ 'border-success border-3' if book.alreadyRead }}" id="book-{{ book.id }}">
+        <div class="col-12 px-3 py-1 bg-white">
             <div class="row">
                 <div name="numeroDeLibro" class="col-1">
                     {{loop.index}}
                 </div>
-                <div class="col-6 border-start">
-                    {{book.title}}
+                <div class="col-8 border-start">
+                    <a href="{{ url_for('views.book', isbn=book.isbn) }}" class="text-decoration-none text-dark">{{book.title}}</a>
                     <i class="bi bi-pencil-square"></i> 
                 </div>
-                <div class="col-1 border-start">
-                    <i class="bi bi-check2-square cursor-pointer"></i>
+                <div class="col-3 border-start d-flex justify-content-end">
+                    <form method="POST" action="{{ url_for('views.toggle_read') }}" class="me-2">
+                        <input type="hidden" name="book_id" value="{{ book.id }}">
+                        <button type="submit" class="btn btn-link p-0 {% if book.alreadyRead %}text-success{% endif %}">
+                            <i class="fa fa-check"></i>
+                        </button>
+                    </form>
                     <form method="POST" action="{{ url_for('views.delete_book') }}">
                         <input type="hidden" name="book_id" value="{{ book.id }}">
-                        <button type="submit" class="fa fa-trash cursor-pointer"></button>
+                        <button type="submit" class="fa fa-trash cursor-pointer" style="background: none; border: none;"></button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
     {% endfor %}
-</div>
+    
+    <!-- Button to open the modal -->
+    <button type="button" class="btn btn-primary ml-0 mt-1" data-toggle="modal" data-target="#addBookModal">
+      Agregar libro
+    </button>
 
+    <!-- Modal -->
+    <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addBookModalLabel">Agregar libro</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Form for adding books -->
+            <form method="POST">
+              <select name="book_id">
+                  {% for book in books %}
+                      <option value="{{ book.id }}">{{ book.title }}</option>
+                  {% endfor %}
+              </select>
+              <button type="submit">Add book to my profile</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
 
 {% endblock %}

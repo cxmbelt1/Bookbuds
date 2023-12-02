@@ -142,6 +142,17 @@ def delete_book():
             db.session.commit()
     return redirect(url_for('views.index'))
 
+@views.route('/toggle_read', methods=['POST'])
+@login_required
+def toggle_read():
+    book_id = request.form.get('book_id')
+    if book_id:
+        book = Book.query.filter_by(id=book_id).first()
+        if book and book in current_user.books:
+            book.alreadyRead = not book.alreadyRead  # Toggle the 'alreadyRead' status
+            db.session.commit()
+    return redirect(url_for('views.index'))
+
 @views.route('/delete-note', methods=['POST'])
 def delete_note():  
     note = json.loads(request.data) 
