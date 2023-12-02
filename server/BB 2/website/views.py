@@ -124,6 +124,9 @@ def home():
 
     return render_template("home.html", user=current_user)
 
+@views.route('/home', methods=['GET'])
+def home2():
+    return render_template("h.html", user=current_user)
 
 @views.route('/delete-note', methods=['POST'])
 def delete_note():  
