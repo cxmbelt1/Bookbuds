@@ -15,11 +15,15 @@ views = Blueprint('views', __name__)
 def get_book_cover(isbn):
     return f'https://covers.openlibrary.org/b/isbn/{isbn}-L.jpg'
 
-@views.route('/book/<isbn>', methods=['GET', 'POST'])
+from sqlalchemy import func, desc
+
+@views.route('/book/<isbn>', defaults={'sort': 'likes', 'order': 'desc'}, methods=['GET', 'POST'])
+@views.route('/book/<isbn>/<sort>', defaults={'order': 'desc'}, methods=['GET', 'POST'])
+@views.route('/book/<isbn>/<sort>/<order>', methods=['GET', 'POST'])
 @login_required
-def book(isbn):
+def book(isbn, sort, order):
     book = Book.query.filter_by(isbn=isbn).first_or_404()
-    cover_url = get_book_cover(isbn)  # Llama a la función aquí
+    cover_url = get_book_cover(isbn)  
 
     reviewed = False
     invalid_feedback = False
@@ -40,12 +44,25 @@ def book(isbn):
             db.session.add(new_review)
             db.session.commit()
 
-    # Para ordenar por cantidad de "likes"
-    reviews = Review.query.filter_by(book_isbn=book.isbn).outerjoin(Like).group_by(Review.id).order_by(func.count(Like.user_id).desc()).all()
+    if sort == 'likes':
+        if order == 'asc':
+            reviews = Review.query.filter_by(book_isbn=book.isbn).outerjoin(Like).group_by(Review.id).order_by(func.count(Like.user_id).asc()).all()
+        else:
+            reviews = Review.query.filter_by(book_isbn=book.isbn).outerjoin(Like).group_by(Review.id).order_by(func.count(Like.user_id).desc()).all()
+    elif sort == 'date':
+        if order == 'asc':
+            reviews = Review.query.filter_by(book_isbn=book.isbn).order_by(Review.date.asc()).all()
+        else:
+            reviews = Review.query.filter_by(book_isbn=book.isbn).order_by(desc(Review.date)).all()
+    elif sort == 'length':
+        if order == 'asc':
+            reviews = Review.query.filter_by(book_isbn=book.isbn).order_by(func.length(Review.review).asc()).all()
+        else:
+            reviews = Review.query.filter_by(book_isbn=book.isbn).order_by(func.length(Review.review).desc()).all()
+    else:
+        reviews = Review.query.filter_by(book_isbn=book.isbn).all()
 
-    return render_template('book.html', book=book, user=current_user, reviews=reviews, reviewed=reviewed, invalid_feedback=invalid_feedback, cover_url=cover_url)  # Pasa la URL de la imagen a tu plantillareturn render_template('book.html', book=book, user=current_user, reviews=reviews, reviewed=reviewed, invalid_feedback=invalid_feedback)
-
-
+    return render_template('book.html', book=book, user=current_user, reviews=reviews, reviewed=reviewed, invalid_feedback=invalid_feedback, cover_url=cover_url)
 @views.route('/edit_review/<int:review_id>', methods=['GET', 'POST'])
 @login_required
 def edit_review(review_id):
