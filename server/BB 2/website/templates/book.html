@@ -79,9 +79,12 @@
                             </button>
                         </div>
                         <div class="modal-body d-flex flex-column align-items-center justify-content-center">
-                            <a href="{{ url_for('views.book', isbn=book.isbn, sort='likes') }}" class="btn btn-outline-dark mb-2">Ordenar por likes</a>
-                            <a href="{{ url_for('views.book', isbn=book.isbn, sort='date') }}" class="btn btn-outline-dark mb-2">Ordenar por fecha</a>
-                            <a href="{{ url_for('views.book', isbn=book.isbn, sort='length') }}" class="btn btn-outline-dark mb-2">Ordenar por longitud</a>
+                            <a href="{{ url_for('views.book', isbn=book.isbn, sort='likes', order='desc') }}" class="btn btn-outline-dark mb-2">Ordenar por likes (más a menos)</a>
+                            <a href="{{ url_for('views.book', isbn=book.isbn, sort='likes', order='asc') }}" class="btn btn-outline-dark mb-2">Ordenar por likes (menos a más)</a>
+                            <a href="{{ url_for('views.book', isbn=book.isbn, sort='date', order='desc') }}" class="btn btn-outline-dark mb-2">Ordenar por fecha (más nuevo a más antiguo)</a>
+                            <a href="{{ url_for('views.book', isbn=book.isbn, sort='date', order='asc') }}" class="btn btn-outline-dark mb-2">Ordenar por fecha (más antiguo a más nuevo)</a>
+                            <a href="{{ url_for('views.book', isbn=book.isbn, sort='length', order='desc') }}" class="btn btn-outline-dark mb-2">Ordenar por longitud (más largas a más cortas)</a>
+                            <a href="{{ url_for('views.book', isbn=book.isbn, sort='length', order='asc') }}" class="btn btn-outline-dark mb-2">Ordenar por longitud (más cortas a más largas)</a>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
