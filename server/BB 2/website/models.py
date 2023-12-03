@@ -27,6 +27,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
+    profile_picture = db.Column(db.String(20), nullable=False, default='default.jpg')
     notes = db.relationship('Note')
     books = db.relationship('Book', secondary=user_books, backref=db.backref('users', lazy='dynamic'))  # New relationship
 
