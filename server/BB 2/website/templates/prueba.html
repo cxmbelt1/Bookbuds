@@ -2,53 +2,152 @@
 {% block title %}Home{% endblock %} 
 {% block content %}
 
-<div class="container shadow p-4 mb-5 bg-body rounded">
-    <!-- Form for adding books -->
-    <form method="POST">
-      <select name="book_id">
-          {% for book in books %}
-              <option value="{{ book.id }}">{{ book.title }}</option>
-          {% endfor %}
-      </select>
-      <button type="submit">Add book to my profile</button>
-    </form>
-
+<div class="container shadow p-4 mb-5 bg-white rounded col-10 rounded-lg mt-5">
     <div class="row">
-        <div class="col" name="tituloDeLista">
-            <h3>Mi Lista <i class="bi bi-book"></i></h3>
+        <div class="col mb-3" name="tituloDeLista">
+          <h3>Mi Lista <span style="font-size: 0.8em;">📚</span></h3>
         </div>
     </div>
 
     {% for book in current_user.books | reverse %}
-    
-    <div class="row">
-        <div class="col-12 px-3 py-1 border bg-white rounded">
+    <div class="row border rounded {{ 'border-success border-3' if book.alreadyRead }}" id="book-{{ book.id }}">
+        <div class="col-12 px-3 py-1 bg-white rounded-lg">
             <div class="row">
                 <div name="numeroDeLibro" class="col-1">
                     {{loop.index}}
                 </div>
-                <div class="col-6 border-start">
-                    {{book.title}}
+                <div class="col-8 border-start">
+                    <a href="{{ url_for('views.book', isbn=book.isbn) }}" class="text-decoration-none text-dark">{{book.title}}</a>
                     <i class="bi bi-pencil-square"></i> 
                 </div>
-                <div class="col-1 border-start">
-                    <i class="bi bi-check2-square cursor-pointer"></i>
-                    <button class="fa fa-trash cursor-pointer" onclick="eliminarLibro({{book.id}})"></button> 
+                <div class="col-3 border-start d-flex justify-content-end">
+                    <form method="POST" action="{{ url_for('views.toggle_read') }}" class="me-2">
+                        <input type="hidden" name="book_id" value="{{ book.id }}">
+                        <button type="submit" class="btn btn-link p-0 {% if book.alreadyRead %}text-success{% else %}text-secondary{% endif %}">
+                            <i class="fa fa-check" style="font-size: 1.5em;"></i> 
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('views.delete_book') }}">
+                        <input type="hidden" name="book_id" value="{{ book.id }}">
+                        <button type="submit" class="fa fa-times cursor-pointer text-danger" style="background: none; border: none; font-size: 1.5em;"></button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
     {% endfor %}
+    
+    
+    <div class="row">
+        <div class="col d-flex justify-content-end">
+            <button type="button" class="btn btn-warning ml-0 mt-4" data-toggle="modal" data-target="#addBookModal">
+              Agregar libro
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addBookModalLabel">Agregar libro</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+           
+            <form method="POST" class="form-group">
+              <label for="book_id">Selecciona un libro:</label>
+              <select name="book_id" class="form-control">
+                  {% for book in books %}
+                      <option value="{{ book.id }}">{{ book.title }}</option>
+                  {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-info mt-3">Agregar libro a mi perfil</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-function eliminarLibro(bookId) {
-    $.post('/delete_book/' + bookId, function() {
-        alert('Libro eliminado de tu perfil');  // Muestra una alerta
-        location.reload();  // Recarga la página después de eliminar el libro
-    });
-}
-</script>
+
+
+{% if reviews %}
+<h2>Mis reseñas de libros</h2>
+<div class="row">
+    {% for review in reviews %}
+    <div class="col-md-6 shadow-sm">
+        <div class="list-group-item list-group-item-action mb-4 p-3">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ book_titles[review.book_isbn] }} 
+                    <small class="ml-2 review-stars {% if review.rating == 1 %}text-danger{% elif review.rating == 2 %}text-danger{% elif review.rating == 3 %}text-warning{% elif review.rating == 4 %}text-warning{% elif review.rating == 5 %}text-success{% endif %}">
+                        {% for i in range(review.rating) %}★{% endfor %}
+                        {% for i in range(5 - review.rating) %}☆{% endfor %}
+                    </small>
+                </h5>
+            </div>
+            <p class="mb-1 review-text">{{ review.review }}</p>
+            <div class="d-flex w-100 justify-content-between">
+                {% if review.date %}
+                <small class="text-muted">{{ review.date.strftime('%Y-%m-%d') }}</small>
+                {% endif %}
+                {% if current_user.email == review.user_email %}
+                <button type="button" class="btn btn-sm border ml-auto" data-toggle="modal" data-target="#editReviewModal{{review.id}}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <form action="{{ url_for('views.delete_review', review_id=review.id) }}" method="post" class="ml-2">
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+        <div class="modal fade" id="editReviewModal{{review.id}}" tabindex="-1" role="dialog" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editReviewModalLabel">Editar reseña</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <form action="{{ url_for('views.edit_review', review_id=review.id) }}" method="post">
+                  <div class="modal-body">
+                      <div class="form-group">
+                          <label for="rating">Valoración</label>
+                          <select class="form-control" id="rating" name="rating">
+                              <option selected disabled>Selecciona una valoración..</option>
+                              <option value="1">★☆☆☆☆</option>
+                              <option value="2">★★☆☆☆</option>
+                              <option value="3">★★★☆☆</option>
+                              <option value="4">★★★★☆</option>
+                              <option value="5">★★★★★</option>
+                          </select>
+                      </div>
+                      <div class="form-group">
+                          <label for="review">Reseña</label>
+                          <textarea class="form-control" id="review" name="review" rows="3">{{ review.review }}</textarea>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                      <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+
+
+
+
 
 {% endblock %}
