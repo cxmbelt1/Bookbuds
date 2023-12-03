@@ -17,6 +17,33 @@ def get_book_cover(isbn):
 
 from sqlalchemy import func, desc
 
+@views.route('/', methods=['GET', 'POST'])
+def index():
+    if not current_user.is_authenticated:
+        return render_template('h.html')
+    if request.method == 'POST':
+        book_id = request.form.get('book_id')
+        if book_id:
+            book = Book.query.filter_by(id=book_id).first()
+            if book and book not in current_user.books:
+                current_user.books.append(book)
+                db.session.commit()
+        return redirect(url_for('views.index'))
+    
+    reviews = []
+    for book in current_user.books:
+        book_reviews = Review.query.filter(Review.book_isbn==book.isbn, Review.user_email!=current_user.email).all()
+        reviews.extend(book_reviews)
+
+    book_titles = {}
+    for review in reviews:
+        book = Book.query.filter_by(isbn=review.book_isbn).first()
+        if book:
+            book_titles[review.book_isbn] = book.title
+    
+    books = Book.query.order_by(Book.title).all()
+    return render_template('index.html', user=current_user, books=books, reviews=reviews, book_titles=book_titles)
+
 @views.route('/book/<isbn>', defaults={'sort': 'likes', 'order': 'desc'}, methods=['GET', 'POST'])
 @views.route('/book/<isbn>/<sort>', defaults={'order': 'desc'}, methods=['GET', 'POST'])
 @views.route('/book/<isbn>/<sort>/<order>', methods=['GET', 'POST'])
@@ -117,36 +144,6 @@ def get_suggestions():
     return jsonify([{'title': book.title, 'id': book.id} for book in suggestions])
 
 
-@views.route('/', methods=['GET', 'POST'])
-@views.route('/index', methods=['GET', 'POST'])
-@login_required
-def index():
-    if request.method == 'POST':
-        book_id = request.form.get('book_id')
-        if book_id:
-            book = Book.query.filter_by(id=book_id).first()
-            if book and book not in current_user.books:
-                current_user.books.append(book)
-                db.session.commit()
-        return redirect(url_for('views.index'))
-    
-    # Obtener las reseñas de los libros del usuario actual
-    reviews = []
-    for book in current_user.books:
-        book_reviews = Review.query.filter(Review.book_isbn==book.isbn, Review.user_email!=current_user.email).all()
-        reviews.extend(book_reviews)
-    # Crear un diccionario para almacenar los títulos de los libros
-    book_titles = {}
-    for review in reviews:
-        book = Book.query.filter_by(isbn=review.book_isbn).first()
-        if book:
-            book_titles[review.book_isbn] = book.title
-    
-    books = Book.query.all()
-    return render_template('index.html', user=current_user, books=books, reviews=reviews, book_titles=book_titles)
-
-
-
 
 @views.route('/delete_book', methods=['POST'])
 @login_required
@@ -189,10 +186,11 @@ def delete_note():
 @views.route('/search', methods=['GET'])
 def search_user():
     query = request.args.get('query', '')
-    user = User.query.filter(User.first_name.contains(query)).first()
-    if user:
-        
-        return redirect(url_for('views.user_profile', user_id=user.id))
+    if not query == "":
+        user = User.query.filter(User.first_name.contains(query)).first()
+        if user:
+            
+            return redirect(url_for('views.user_profile', user_id=user.id))
     else:
         flash('No existe usuario con ese nombre.', category='error')
         return redirect(url_for('views.index'))
@@ -228,11 +226,3 @@ def user_profile(user_id):
     else:
         # Usuario no existe
         return redirect(url_for('views.index'))
-
-
-
-
-
-@views.route('/home', methods=['GET'])
-def home():
-    return render_template('h.html')
