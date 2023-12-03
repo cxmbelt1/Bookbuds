@@ -84,7 +84,7 @@ def edit_review(review_id):
         return render_template('edit_review.html', review=review)
     else:
         flash('No tienes permiso para editar esta review.', category='error')
-        return redirect(url_for('views.home'))
+        return redirect(url_for('views.index'))
 
 @views.route('/review/<int:review_id>/like', methods=['POST'])
 @login_required
@@ -193,7 +193,7 @@ def search_user():
         return redirect(url_for('views.user_profile', user_id=user.id))
     else:
         
-        return redirect(url_for('views.home'))
+        return redirect(url_for('views.index'))
     
 @views.route('/profile/<int:user_id>', methods=['GET'])
 def user_profile(user_id):
@@ -202,8 +202,9 @@ def user_profile(user_id):
         return render_template('profile.html', user=user)
     else:
         #usuario no existe
-        return redirect(url_for('views.home'))
+        return redirect(url_for('views.index'))
+
 
 @views.route('/home', methods=['GET'])
-def bookbuds():
+def home():
     return render_template('h.html')
