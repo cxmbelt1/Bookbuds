@@ -74,8 +74,7 @@
         </form>
         <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('auth.profile', user_id=current_user.id) }}"><i class="fa fa-user"></i> </a>
-            </li>
+                <a class="nav-link" href="{{ url_for('views.user_profile', user_id=current_user.id) }}"><i class="fa fa-user"></i> </a>
             <li class="nav-item">
                 <a class="nav-link" href="/logout"><i class="fa fa-sign-out"></i></a>
             </li>

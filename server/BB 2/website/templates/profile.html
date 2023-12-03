@@ -3,7 +3,7 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-<div class="profile-container">
+<div class=" profile-container bg-white mt-3">
     <div class="profile-header">
         <img src="{{ url_for('static', filename='./image.jpg') }}" alt="User Image" class="user-image">
         <h1 class="profile-title">{{ user.first_name }}</h1>
@@ -14,32 +14,82 @@
         <p class="profile-field"><strong>Email:</strong> {{ user.email }}</p>
     </div>
 </div>
-<div class="reviews-container">
-    <h2 class="reviews-title">User Reviews</h2>
-    {% if reviews %}
-    <div class="row">
-        {% for review in reviews %}
-        <div class="col-md-12 ">
-            <div class="list-group-item list-group-item-action mb-4 p-3">
-                <div class="d-flex w-100 justify-content-between">
+
+
+        
+        
+        <h4>Mis reseñas de libros</h4>
+          {% if reviews %}
+          
+          <div class="row">
+              {% for review in reviews %}
+              <div class="col-md-4 ">
+                <div class="list-group-item list-group-item-action mb-4 p-3">
+                  <div class="d-flex w-100 justify-content-between">
                     <h6 class="mb-1">
-                        <a href="{{ url_for('views.book', isbn=review.bookisbn) }}" class="text-decoration-none text-dark">
-                            {{ book_titles[review.book_isbn] }}
-                        </a>
-                    </h6>
-                    <small class="ml-2 review-stars">
-                        {% for i in range(review.rating) %}★{% endfor %}
-                        {% for i in range(5 - review.rating) %}☆{% endfor %}
-                    </small>
+                      <a href="{{ url_for('views.book', isbn=review.book_isbn) }}" class="text-decoration-none text-dark">
+                          {{ book_titles[review.book_isbn] }}
+                      </a>
+                  </h6>
+                          <small class="ml-2 review-stars {% if review.rating == 1 %}text-danger{% elif review.rating == 2 %}text-danger{% elif review.rating == 3 %}text-warning{% elif review.rating == 4 %}text-warning{% elif review.rating == 5 %}text-success{% endif %}">
+                              {% for i in range(review.rating) %}★{% endfor %}
+                              {% for i in range(5 - review.rating) %}☆{% endfor %}
+                          </small>
+                      </h5>
+                  </div>
+                  <p class="mb-1 review-text small">{{ review.review }}</p>
+                  <div class="d-flex w-100 justify-content-between">
+                      {% if review.date %}
+                      <small class="text-muted">{{ review.date.strftime('%Y-%m-%d') }}</small>
+                      {% endif %}
+                      {% if current_user.email == review.user_email %}
+                      <button type="button" class="btn btn-sm border ml-auto" data-toggle="modal" data-target="#editReviewModal{{review.id}}">
+                          <i class="fas fa-edit"></i>
+                      </button>
+                      <form action="{{ url_for('views.delete_review', review_id=review.id) }}" method="post" class="ml-2">
+                          <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button>
+                      </form>
+                      {% endif %}
+                  </div>
+              </div>
+              </div>
+              <div class="modal fade" id="editReviewModal{{review.id}}" tabindex="-1" role="dialog" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editReviewModalLabel">Editar reseña</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <p class="mb-1 review-text small">{{ review.review }}</p>
-                
+                <form action="{{ url_for('views.edit_review', review_id=review.id) }}" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="rating">Valoración</label>
+                            <select class="form-control" id="rating" name="rating">
+                                <option selected disabled>Selecciona una valoración..</option>
+                                <option value="1">★☆☆☆☆</option>
+                                <option value="2">★★☆☆☆</option>
+                                <option value="3">★★★☆☆</option>
+                                <option value="4">★★★★☆</option>
+                                <option value="5">★★★★★</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="review">Reseña</label>
+                            <textarea class="form-control" id="review" name="review" rows="3">{{ review.review }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </div>
+                </form>
             </div>
         </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-</div>
+              </div>
+              {% endfor %}
+          {% endif %}
 <style>
     .profile-container {
         max-width: 600px;

@@ -130,8 +130,11 @@ def index():
                 db.session.commit()
         return redirect(url_for('views.index'))
     
-    # Obtener las reseñas del usuario actual
-    reviews = Review.query.filter_by(user_email=current_user.email).all()
+    # Obtener las reseñas de los libros del usuario actual
+    reviews = []
+    for book in current_user.books:
+        book_reviews = Review.query.filter_by(book_isbn=book.isbn).all()
+        reviews.extend(book_reviews)
     
     # Crear un diccionario para almacenar los títulos de los libros
     book_titles = {}
@@ -197,15 +200,38 @@ def search_user():
     
 
 
-
-@views.route('/profile/<int:user_id>', methods=['GET'])
+    
+@views.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 def user_profile(user_id):
     user = User.query.get(user_id)
     if user:
-        return render_template('profile.html', user=user)
+        if request.method == 'POST':
+            book_id = request.form.get('book_id')
+            if book_id:
+                book = Book.query.filter_by(id=book_id).first()
+                if book and book not in user.books:
+                    user.books.append(book)
+                    db.session.commit()
+            return redirect(url_for('views.user_profile', user_id=user.id))
+        
+        # Obtener las reseñas del usuario
+        reviews = Review.query.filter_by(user_email=user.email).all()
+        
+        # Crear un diccionario para almacenar los títulos de los libros
+        book_titles = {}
+        for review in reviews:
+            book = Book.query.filter_by(isbn=review.book_isbn).first()
+            if book:
+                book_titles[review.book_isbn] = book.title
+        
+        books = Book.query.all()
+        return render_template('profile.html', user=user, books=books, reviews=reviews, book_titles=book_titles)
     else:
-        #usuario no existe
+        # Usuario no existe
         return redirect(url_for('views.index'))
+
+
+
 
 
 @views.route('/home', methods=['GET'])
