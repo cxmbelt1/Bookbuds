@@ -133,9 +133,8 @@ def index():
     # Obtener las reseñas de los libros del usuario actual
     reviews = []
     for book in current_user.books:
-        book_reviews = Review.query.filter_by(book_isbn=book.isbn).all()
+        book_reviews = Review.query.filter(Review.book_isbn==book.isbn, Review.user_email!=current_user.email).all()
         reviews.extend(book_reviews)
-    
     # Crear un diccionario para almacenar los títulos de los libros
     book_titles = {}
     for review in reviews:

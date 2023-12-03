@@ -72,11 +72,11 @@
       
         <!-- Reseñas (40% del ancho) -->
         <div class="col-md-4   mt-5 p-4 mb-5 rounded-lg bg-white">
-          <h4>Mis reseñas de libros</h4>
+          <h5>Reseñas de los libros que sigues</h5>
             {% if reviews %}
             
             <div class="row">
-                {% for review in reviews %}
+                {% for review in reviews |reverse %}
                 <div class="col-md-12 ">
                   <div class="list-group-item list-group-item-action mb-4 p-3">
                     <div class="d-flex w-100 justify-content-between">
@@ -93,6 +93,8 @@
                     </div>
                     <p class="mb-1 review-text small">{{ review.review }}</p>
                     <div class="d-flex w-100 justify-content-between">
+                        <br>
+                        <small>@{{  review.user_email.split('@')[0] }}</small>
                         {% if review.date %}
                         <small class="text-muted">{{ review.date.strftime('%Y-%m-%d') }}</small>
                         {% endif %}
@@ -106,40 +108,8 @@
                         {% endif %}
                     </div>
                 </div>
-                </div>
-                <div class="modal fade" id="editReviewModal{{review.id}}" tabindex="-1" role="dialog" aria-labelledby="editReviewModalLabel" aria-hidden="true">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="editReviewModalLabel">Editar reseña</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                      </button>
-                  </div>
-                  <form action="{{ url_for('views.edit_review', review_id=review.id) }}" method="post">
-                      <div class="modal-body">
-                          <div class="form-group">
-                              <label for="rating">Valoración</label>
-                              <select class="form-control" id="rating" name="rating">
-                                  <option selected disabled>Selecciona una valoración..</option>
-                                  <option value="1">★☆☆☆☆</option>
-                                  <option value="2">★★☆☆☆</option>
-                                  <option value="3">★★★☆☆</option>
-                                  <option value="4">★★★★☆</option>
-                                  <option value="5">★★★★★</option>
-                              </select>
-                          </div>
-                          <div class="form-group">
-                              <label for="review">Reseña</label>
-                              <textarea class="form-control" id="review" name="review" rows="3">{{ review.review }}</textarea>
-                          </div>
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                          <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                      </div>
-                  </form>
-              </div>
+             </div>
+
           </div>
                 </div>
                 {% endfor %}
