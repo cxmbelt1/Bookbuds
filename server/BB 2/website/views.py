@@ -80,7 +80,7 @@ def edit_review(review_id):
                 flash('Tu reseña ha sido actualizada!', category='success')
             else:
                 flash('Completa todos los campos!', category='error')
-            return redirect(url_for('views.book', isbn=review.book_isbn))
+            return redirect(request.referrer)
         return render_template('edit_review.html', review=review)
     else:
         flash('No tienes permiso para editar esta review.', category='error')
@@ -108,7 +108,7 @@ def delete_review(review_id):
         Like.query.filter_by(review_id=review.id).delete()
         db.session.delete(review)
         db.session.commit()
-    return redirect(url_for('views.book', isbn=review.book_isbn))
+    return redirect(request.referrer)
 
 @views.route('/get_suggestions', methods=['GET', 'POST'])
 def get_suggestions():
@@ -116,6 +116,8 @@ def get_suggestions():
     suggestions = Book.query.filter(Book.title.ilike('%' + input + '%')).all()
     return jsonify([{'title': book.title, 'id': book.id} for book in suggestions])
 
+
+@views.route('/', methods=['GET', 'POST'])
 @views.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
@@ -127,8 +129,21 @@ def index():
                 current_user.books.append(book)
                 db.session.commit()
         return redirect(url_for('views.index'))
+    
+    # Obtener las reseñas del usuario actual
+    reviews = Review.query.filter_by(user_email=current_user.email).all()
+    
+    # Crear un diccionario para almacenar los títulos de los libros
+    book_titles = {}
+    for review in reviews:
+        book = Book.query.filter_by(isbn=review.book_isbn).first()
+        if book:
+            book_titles[review.book_isbn] = book.title
+    
     books = Book.query.all()
-    return render_template('index.html', user=current_user, books=books)
+    return render_template('index.html', user=current_user, books=books, reviews=reviews, book_titles=book_titles)
+
+
 
 
 @views.route('/delete_book', methods=['POST'])
@@ -165,19 +180,8 @@ def delete_note():
 
     return jsonify({})
 
-@views.route('/', methods=['GET', 'POST'])
-@login_required
-def home():
-    if request.method == 'POST': 
-        note = request.form.get('note')
-        if len(note) < 1:
-            flash('Note is too short!', category='error') 
-        else:
-            new_note = Note(data=note, user_id=current_user.id)  
-            db.session.add(new_note) 
-            db.session.commit()
-            flash('Note added!', category='success')
-    return render_template("home.html", user=current_user)
+
+
 
 
 @views.route('/search', methods=['GET'])
