@@ -1,50 +1,96 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous"
     />
     <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-      crossorigin="anonymous"
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        crossorigin="anonymous"
     />
     <script src="https://kit.fontawesome.com/af063aaee4.js" crossorigin="anonymous"></script>
     <title>{% block title %}Home{% endblock %}</title>
-  </head>
-  <body style="background-color: #f0f0f0;">
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #224a28;"> 
-      <button
+    <style>
+        /* Custom styles */
+        .navbar-custom {
+            background-color:  #188754; /* Pinterest's navbar color */
+            border-bottom: 1px solid #efefef; /* Light border */
+        }
+        .navbar-nav {
+            flex-direction: row;
+        }
+        .nav-item {
+            margin: 0 8px; /* Space between nav items */
+        }
+        .nav-link {
+            color: #333333; /* Pinterest's icon color */
+        }
+        .form-inline {
+            display: flex;
+            flex-grow: 1;
+            justify-content: center; /* Center search bar */
+        }
+        .form-control {
+            border: 2px solid #efefef; /* Style search input */
+            border-radius: 16px; /* Rounded borders for the input */
+            margin-right: 8px;
+        }
+        .btn-outline-success {
+            border-color: #efefef; /* Style button */
+            border-radius: 16px; /* Rounded borders for the button */
+            color: #ffffff; /* Button text color */
+        }
+        .fa {
+            color: #333333; /* Icon color */
+        }
+    </style>
+</head>
+<body style="background-color: #f0f0f0;">
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <button
         class="navbar-toggler"
         type="button"
         data-toggle="collapse"
         data-target="#navbar"
-      >
+    >
         <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbar">
-        <div class="navbar-nav mr-auto">
-          {% if current_user.is_authenticated %}
-          <a class="nav-item nav-link" id="home" href="/">Home</a>
-          <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
-          {% else %}
-          <a class="nav-item nav-link" id="login" href="/login">Login</a>
-          <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
-          {% endif %}
-        </div>
+    </button>
+    <div class="collapse navbar-collapse" id="navbar">
+        <ul class="navbar-nav mr-auto">
+            <!-- Left-aligned icons (optional) -->
+        </ul>
         {% if current_user.is_authenticated %}
         <form class="form-inline" action="{{ url_for('views.search_user') }}" method="GET">
-          <input class="form-control mr-sm-2" type="text" name="query" placeholder="Buscar persona...">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+            <input class="form-control" type="text" name="query" placeholder="Buscar persona...">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
         </form>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/"><i class="fa fa-home"></i></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout"><i class="fa fa-sign-out"></i></a>
+            </li>
+            <!-- Additional icons can be added here -->
+        </ul>
+        {% else %}
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/login"><i class="fa fa-sign-in"></i></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/sign-up"><i class="fa fa-user-plus"></i></a>
+            </li>
+        </ul>
         {% endif %}
-      </div>
-    </nav>
+    </div>
+</nav>
 
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
     messages %} {% for category, message in messages %} {% if category ==
