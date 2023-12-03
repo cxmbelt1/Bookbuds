@@ -192,9 +192,12 @@ def search_user():
         
         return redirect(url_for('views.user_profile', user_id=user.id))
     else:
-        
+        flash('No existe usuario con ese nombre.', category='error')
         return redirect(url_for('views.index'))
     
+
+
+
 @views.route('/profile/<int:user_id>', methods=['GET'])
 def user_profile(user_id):
     user = User.query.get(user_id)
