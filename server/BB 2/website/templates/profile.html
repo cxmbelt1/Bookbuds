@@ -14,6 +14,32 @@
         <p class="profile-field"><strong>Email:</strong> {{ user.email }}</p>
     </div>
 </div>
+<div class="reviews-container">
+    <h2 class="reviews-title">User Reviews</h2>
+    {% if reviews %}
+    <div class="row">
+        {% for review in reviews %}
+        <div class="col-md-12 ">
+            <div class="list-group-item list-group-item-action mb-4 p-3">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">
+                        <a href="{{ url_for('views.book', isbn=review.bookisbn) }}" class="text-decoration-none text-dark">
+                            {{ book_titles[review.book_isbn] }}
+                        </a>
+                    </h6>
+                    <small class="ml-2 review-stars">
+                        {% for i in range(review.rating) %}★{% endfor %}
+                        {% for i in range(5 - review.rating) %}☆{% endfor %}
+                    </small>
+                </div>
+                <p class="mb-1 review-text small">{{ review.review }}</p>
+                
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
 <style>
     .profile-container {
         max-width: 600px;
@@ -45,6 +71,28 @@
         border-radius: 50%;
         margin: 0 auto;
         display: block;
+    }
+    .reviews-container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+    .reviews-title {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .review {
+        margin-bottom: 15px;
+    }
+    .review-text {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+    .review-author {
+        font-style: italic;
+        text-align: right;
     }
 </style>
 {% endblock %}
