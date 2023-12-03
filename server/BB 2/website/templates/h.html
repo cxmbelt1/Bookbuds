@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home - BookBuds</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Lemon+Milk&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='personalized.css')}}">
+  </head>
+
+  <body class="bg-success p-2 text-dark bg-opacity-7" style="min-height: 100%;">
+    <div class="container vh-100" style="min-height: 100%;">
+      <div class="row fixed-top p-5">
+        <div class="col-2">
+          <img class="img-fluid" src="{{ url_for('static', filename='ln.png')}}" alt="logo">
+        </div>
+        <div class="col-8"></div>
+        <div class="col-2">
+          <a class="text-white" href="#">Informacion</a>
+        </div>
+      </div>
+      
+      <div class="row align-items-center h-100">
+        <div class="col-8">
+          <h1 class="lemon-milk-font display-1 text-white font-weight-bold" style="font-size: 8rem;">BOOKBUDS</h1>
+        </div>
+        <div class="col-4">
+          <p class="text-white">Para amantes de la lectura. <span style="font-weight: bold;">¡Comparte y guarda tus opiniones literarias!</span></p>
+          <div class="d-grid gap-2">
+            
+            <!-- Formulario para Iniciar Sesión -->
+            <form action="/login" method="get">
+              <button class="btn btn-light" type="submit">Iniciar Sesión</button>
+            </form>
+
+            <!-- Formulario para Registrarse -->
+            <form action="/sign-up" method="get">
+              <button class="btn btn-dark" type="submit">Registrarse</button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

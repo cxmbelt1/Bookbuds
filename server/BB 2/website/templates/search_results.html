@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Resultados de la Búsqueda</h2>
+    {% for user in users %}
+        <p>{{ user.first_name }} - {{ user.email }}</p>
+        
+    {% endfor %}
+{% endblock %}

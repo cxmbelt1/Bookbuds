@@ -1,0 +1,76 @@
+{% extends "base.html" %} 
+{% block title %}Home{% endblock %} 
+{% block content %}
+
+<div class="container shadow p-4 mb-5 bg-white rounded col-10 rounded-lg mt-5">
+    <div class="row">
+        <div class="col mb-3" name="tituloDeLista">
+          <h3>Mi Lista <span style="font-size: 0.8em;">📚</span></h3>
+        </div>
+    </div>
+
+    {% for book in list | reverse %}
+    <div class="row border rounded {{ 'border-success border-3' if book.is_read }}" id="book-{{ book.id }}">
+        <div class="col-12 px-3 py-1 bg-white rounded-lg">
+            <div class="row">
+                <div name="numeroDeLibro" class="col-1">
+                    {{loop.index}}
+                </div>
+                <div class="col-8 border-start">
+                    <a href="{{ url_for('views.book', isbn=book.book.isbn) }}" class="text-decoration-none text-dark">{{book.book.title}}</a>
+                    <i class="bi bi-pencil-square"></i> 
+                </div>
+                <div class="col-3 border-start d-flex justify-content-end">
+                    <form method="POST" action="{{ url_for('views.toggle_read') }}" class="me-2">
+                        <input type="hidden" name="book_id" value="{{ book.book.id }}">
+                        <button type="submit" class="btn btn-link p-0 {% if book.is_read %}text-success{% else %}text-secondary{% endif %}">
+                            <i class="fa fa-check" style="font-size: 1.5em;"></i>
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('views.delete_book') }}">
+                        <input type="hidden" name="book_id" value="{{ book.book.id }}">
+                        <button type="submit" class="fa fa-times cursor-pointer text-danger" style="background: none; border: none; font-size: 1.5em;"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    
+    <div class="row">
+        <div class="col d-flex justify-content-end">
+            <button type="button" class="btn btn-warning ml-0 mt-4" data-toggle="modal" data-target="#addBookModal">
+              Agregar libro
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addBookModalLabel">Agregar libro</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+           
+            <form method="POST" class="form-group">
+              <label for="book_id">Selecciona un libro:</label>
+              <select name="book_id" class="form-control">
+                  {% for book in books %}
+                      <option value="{{ book.id }}">{{ book.title }}</option>
+                  {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-info mt-3">Agregar libro a mi perfil</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% endblock %}
