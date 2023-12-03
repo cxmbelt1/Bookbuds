@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
 from .models import Note
-from .models import User, Book, Review, Like
+from .models import User, Book, Review, Like, List
 from . import db
 import json
 from flask import redirect, url_for
@@ -40,9 +40,15 @@ def index():
         book = Book.query.filter_by(isbn=review.book_isbn).first()
         if book:
             book_titles[review.book_isbn] = book.title
+
+    user_list = db.session.query(Book, List.is_read)\
+        .join(List, (List.book_id == Book.id))\
+        .filter(List.user_id == current_user.id)\
+        .all()
+    list = [{'book': book, 'is_read': is_read} for book, is_read in user_list]
     
     books = Book.query.order_by(Book.title).all()
-    return render_template('index.html', user=current_user, books=books, reviews=reviews, book_titles=book_titles)
+    return render_template('index.html', user=current_user, books=books, reviews=reviews, book_titles=book_titles, lists=list)
 
 @views.route('/book/<isbn>', defaults={'sort': 'likes', 'order': 'desc'}, methods=['GET', 'POST'])
 @views.route('/book/<isbn>/<sort>', defaults={'order': 'desc'}, methods=['GET', 'POST'])
@@ -161,9 +167,9 @@ def delete_book():
 def toggle_read():
     book_id = request.form.get('book_id')
     if book_id:
-        book = Book.query.filter_by(id=book_id).first()
-        if book and book in current_user.books:
-            book.alreadyRead = not book.alreadyRead  # Toggle the 'alreadyRead' status
+        book = List.query.filter_by(book_id=book_id, user_id=current_user.id).first()
+        if book:
+            book.is_read = not book.is_read
             db.session.commit()
     return redirect(url_for('views.index'))
 
