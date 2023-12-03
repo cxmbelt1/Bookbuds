@@ -2,10 +2,10 @@
 {% block title %}Home{% endblock %} 
 {% block content %}
 
-<div class="container-fluid ">
-    <div class="row  shadow mt-5 p-4 mb-5 rounded-lg bg-white">
+<div class="container-fluid row ">
+    <div class="col   mt-5 mr-1 p-4 mb-5 rounded-lg bg-white">
         <!-- Lista de Libros (60% del ancho) -->
-        <div class="col-md-8 mb-3" name="tituloDeLista">
+        <div class="col  mb-3" name="tituloDeLista">
             <h3>Mi Lista <span style="font-size: 0.8em;">📚</span></h3>
             
             {% for book in current_user.books | reverse %}
@@ -67,10 +67,11 @@
                 </div>
               </div>
           </div>
+        </div> 
       </div>
       
         <!-- Reseñas (40% del ancho) -->
-        <div class="col-md-4">
+        <div class="col-md-4   mt-5 p-4 mb-5 rounded-lg bg-white">
           <h4>Mis reseñas de libros</h4>
             {% if reviews %}
             
