@@ -3,9 +3,21 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
+<style>
+    .user-image {
+        width: 10px;  /* Ajusta el ancho al tamaño que desees */
+        height: 50px;  /* Ajusta la altura al tamaño que desees */
+        border-radius: 50%;  /* Esto hace que la imagen sea circular */
+        object-fit: cover;  /* Esto asegura que la imagen cubra todo el espacio sin distorsionarse */
+    }
+    </style>
 <div class=" profile-container bg-white mt-3">
     <div class="profile-header">
-        <img src="{{ url_for('static', filename='./image.jpg') }}" alt="User Image" class="user-image">
+        <img src="{{ url_for('static', filename='profilePictures/' + user.profile_picture) }}" alt="User Image" class="user-image">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="profile_picture">
+            <input type="submit" value="Upload">
+        </form>
         <h1 class="profile-title">{{ user.first_name }}</h1>
     </div>
     <div class="profile-info">

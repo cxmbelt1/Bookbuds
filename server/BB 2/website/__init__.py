@@ -11,6 +11,8 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config['UPLOAD_FOLDER'] = 'C:/Users/user/OneDrive - Universidad Nacional de Colombia/Bureau/Book/Bookbuds/server/BB 2/website/static/profilePictures'
+    
     db.init_app(app)
 
     from .views import views

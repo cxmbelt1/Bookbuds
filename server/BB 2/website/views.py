@@ -2,13 +2,15 @@ from flask import Blueprint, render_template, request, flash, jsonify
 from flask_login import login_required, current_user
 from .models import Note
 from .models import User, Book, Review, Like
+from werkzeug.utils import secure_filename
 from . import db
 import json
 from flask import redirect, url_for
 from sqlalchemy import desc, func
 import requests
 import json
-
+import os
+from flask import current_app as app
 
 views = Blueprint('views', __name__)
 
@@ -135,6 +137,14 @@ def index():
     for book in current_user.books:
         book_reviews = Review.query.filter(Review.book_isbn==book.isbn, Review.user_email!=current_user.email).all()
         reviews.extend(book_reviews)
+
+    # Crear un diccionario para almacenar los usuarios que hicieron cada reseña
+    review_users = {}
+    for review in reviews:
+        review_user = User.query.filter_by(email=review.user_email).first()
+        if review_user:
+            review_users[review.user_email] = review_user
+
     # Crear un diccionario para almacenar los títulos de los libros
     book_titles = {}
     for review in reviews:
@@ -143,8 +153,7 @@ def index():
             book_titles[review.book_isbn] = book.title
     
     books = Book.query.all()
-    return render_template('index.html', user=current_user, books=books, reviews=reviews, book_titles=book_titles)
-
+    return render_template('index.html', user=current_user, books=books, reviews=reviews, book_titles=book_titles, review_users=review_users)
 
 
 
@@ -199,12 +208,18 @@ def search_user():
     
 
 
-    
+   
 @views.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 def user_profile(user_id):
     user = User.query.get(user_id)
     if user:
         if request.method == 'POST':
+            if 'profile_picture' in request.files:
+                profile_picture = request.files['profile_picture']
+                filename = secure_filename(profile_picture.filename)
+                profile_picture.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                user.profile_picture = filename
+                db.session.commit()
             book_id = request.form.get('book_id')
             if book_id:
                 book = Book.query.filter_by(id=book_id).first()
@@ -228,6 +243,7 @@ def user_profile(user_id):
     else:
         # Usuario no existe
         return redirect(url_for('views.index'))
+
 
 
 
