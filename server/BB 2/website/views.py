@@ -199,3 +199,4 @@ def user_profile(user_id):
     else:
         #usuario no existe
         return redirect(url_for('views.home'))
+    
