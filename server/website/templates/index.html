@@ -3,38 +3,43 @@
 {% block content %}
 
 <div class="container-fluid">
-    <div class="row">
-
+    <div class="row d-flex justify-content-center">
         <!-- Reseñas (60% del ancho) -->
-        <div class="col-md-8 mt-5 p-4 mb-5 rounded-lg bg-white">
-            <h5>Reseñas de los libros que sigues</h5>
+        <div name="reseñasRecuadroGrande" class="col-7 mr-1 mt-5 p-4 mb-5 rounded-lg bg-white">
+            <h5 class="mb-3">Reseñas de los libros que sigues</h5>
             {% if reviews %}
-            <div class="row">
                 {% for review in reviews | reverse %}
-                <div class="col-md-12">
-                    <div class="list-group-item list-group-item-action mb-4 p-3">
-                        <div class="d-flex w-100 justify-content-between align-items-start">
-                            <div class="d-flex w-100 justify-content-between">
-                                <img src="{{ url_for('static', filename=review.user.photo_path) }}" alt="User Image" class="user-image img-thumbnail rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-                                <div>
-                                    <h6 class="mb-1">
-                                        <a href="{{ url_for('views.book', isbn=review.book_isbn) }}" class="text-decoration-none text-dark">
-                                            {{ book_titles[review.book_isbn] }}
-                                        </a>
-                                    </h6>
-                                    <small class="ml-2 review-stars {% if review.rating == 1 %}text-danger{% elif review.rating == 2 %}text-danger{% elif review.rating == 3 %}text-warning{% elif review.rating == 4 %}text-warning{% elif review.rating == 5 %}text-success{% endif %}">
-                                        {% for i in range(review.rating) %}★{% endfor %}
-                                        {% for i in range(5 - review.rating) %}☆{% endfor %}
-                                    </small>
-                                </div>
+                    <div name="recuadro de cada review" class="list-group-item list-group-item-action  p-3">
+                        <div name="fila del titulo" class="row">  
+                            <div class="d-flex justify-content-between ml-5 pl-5">
+                                <h6 class="text-center ml-5 pl-5">
+                                    <a href="{{ url_for('views.book', isbn=review.book_isbn) }}" class="text-decoration-none text-dark pl-5 ml-5">
+                                        {{ book_titles[review.book_isbn] }}
+                                    </a>
+                                </h6>
+                                <small class="ml-2 review-stars {% if review.rating == 1 %}text-danger{% elif review.rating == 2 %}text-danger{% elif review.rating == 3 %}text-warning{% elif review.rating == 4 %}text-warning{% elif review.rating == 5 %}text-success{% endif %}">
+                                    {% for i in range(review.rating) %}★{% endfor %}
+                                    {% for i in range(5 - review.rating) %}☆{% endfor %}
+                                </small>
                             </div>
-                            <div class="d-flex w-100 justify-content-between">
-                                <small>@{{  review.user_email.split('@')[0] }}</small>
-                                {% if review.date %}
-                                <small class="text-muted">{{ review.date.strftime('%Y-%m-%d') }}</small>
-                                {% endif %}
+                        </div>
+                        <div name="fila de la foto y el texto" class="row mb-2">
+                            <div class="col-2">
+                                <img src="{{ url_for('static', filename=review.user.photo_path) }}" alt="User Image" class="user-image img-thumbnail rounded-circle ml-3 mb-3 mr-2" style="width: 50px; height: 50px; object-fit: cover;">
+                            </div>
+                            <div class="col-10 d-flex justify-content-center">
+                                <em class=" review-text small">"{{ review.review }}"</em>
+                            </div>
+                        </div>
+                        <div class="row justify-content-end">
+                            <small class="mx-2">@{{  review.user_email.split('@')[0] }}</small>
+                            {% if review.date %}
+                            <small class="text-muted mr-3">{{ review.date.strftime('%Y-%m-%d') }}</small>
+                            {% endif %}
+                        </div>
                                 {% if current_user.email == review.user_email %}
-                                <div>
+                                   
+                                <div>             
                                     <button type="button" class="btn btn-sm border ml-auto" data-toggle="modal" data-target="#editReviewModal{{review.id}}">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -43,31 +48,33 @@
                                     </form>
                                 </div>
                                 {% endif %}
-                            </div>
-                            <p class="mb-1 review-text small">{{ review.review }}</p>
-                        </div>
+                
+                            
+
                     </div>
-                </div>
+                
                 {% endfor %}
-            </div>
+
             {% endif %}
         </div>
 
         <!-- Lista de Libros (40% del ancho) -->
         <div class="col-md-4 mt-5 p-4 mb-5 rounded-lg bg-white">
             <h3>Mi Lista <span style="font-size: 0.8em;">📚</span></h3>
+            
             {% for list in lists | reverse %}
+            
             <div class="row border rounded {{ 'border-success border-3' if list.is_read }}" id="book-{{ list.book.id }}">
                 <div class="col-12 px-3 py-1 bg-white rounded-lg">
-                    <div class="row">
+                    <div class="row mt-1">
                         <div name="numeroDeLibro" class="col-1">
                             {{loop.index}}
                         </div>
-                        <div class="col-8 border-start">
+                        <div class="col-9 border-start">
                             <a href="{{ url_for('views.book', isbn=list.book.isbn) }}" class="text-decoration-none text-dark">{{list.book.title}}</a>
                             <i class="bi bi-pencil-square"></i> 
                         </div>
-                        <div class="col-3 border-start d-flex justify-content-end">
+                        <div class=" border-start d-flex justify-content-end">
                             <form method="POST" action="{{ url_for('views.toggle_read') }}" class="me-2">
                                 <input type="hidden" name="book_id" value="{{ list.book.id }}">
                                 <button type="submit" class="btn btn-link p-0 {% if list.is_read %}text-success{% else %}text-secondary{% endif %}">
