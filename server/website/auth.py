@@ -3,6 +3,10 @@ from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db   
 from flask_login import login_user, login_required, logout_user, current_user
+import os
+import uuid
+from flask import current_app as app
+from werkzeug.utils import secure_filename
 
 
 auth = Blueprint('auth', __name__)
@@ -66,13 +70,44 @@ def sign_up():
     return render_template("sign_up.html", user=current_user)
 
 @auth.route('/profile', methods=['GET', 'POST'])
+
 def profile():
-    
+    if request.method == 'POST':
+        user = current_user
+        name = request.form.get('new_first_name')
+        current_password = request.form.get('current_password')
+        new_password = request.form.get('new_password')
+        new_password_confirmation = request.form.get('new_password_confirmation')
+
+        if user:
+            if name:
+                user.first_name = name
+            if new_password and new_password_confirmation:
+                if not check_password_hash(user.password, current_password):
+                    flash('Incorrect current password.', category='error')
+                    return redirect(url_for('auth.edit_profile'))
+                if new_password != new_password_confirmation:
+                    flash('New passwords don\'t match.', category='error')
+                    return redirect(url_for('auth.edit_profile'))
+                elif len(new_password) < 7:
+                    flash('New password must be at least 7 characters.', category='error')
+                    return redirect(url_for('auth.edit_profile'))
+                else:
+                    user.password = generate_password_hash(new_password, method='pbkdf2:sha256')
+            if 'picture' in request.files:
+                picture = request.files['picture']
+                if picture.filename != '' and '.' in picture.filename and picture.filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
+                    filename = str(uuid.uuid4()) + secure_filename(picture.filename)
+                    path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    picture.save(path)
+                    print(path)
+                    ##user.photo_path = path
+            db.session.commit()
+            flash('Profile updated!', category='success')
+            return redirect(url_for('views.index'))
     return render_template("profile.html", user=current_user)
 
 @auth.route('/idlibro', methods=['GET', 'POST'])
+@login_required
 def idlibro():
-
     return render_template("profile.html", user=current_user)
-
-

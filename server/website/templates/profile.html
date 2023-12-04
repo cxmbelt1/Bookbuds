@@ -5,7 +5,7 @@
 {% block content %}
 <div class=" profile-container bg-white mt-3">
     <div class="profile-header">
-        <img src="{{ url_for('static', filename='./image.jpg') }}" alt="User Image" class="user-image">
+        <img src="{{ url_for('static', filename=user.photo_path) }}" alt="User Image" class="user-image">
         <h1 class="profile-title">{{ user.first_name }}</h1>
     </div>
     <div class="profile-info">

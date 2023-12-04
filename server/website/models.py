@@ -29,6 +29,8 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(150))
     notes = db.relationship('Note')
     books = db.relationship('Book', secondary='list')
+    reviews = db.relationship('Review')
+    photo_path = db.Column(db.String(255))
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,6 +40,7 @@ class Review(db.Model):
     rating = db.Column(db.Integer)
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     likes = db.relationship('Like', backref='review', lazy='dynamic')
+    user = db.relationship('User', backref='review')
 
 class Like(db.Model):
     __tablename__ = 'likes'

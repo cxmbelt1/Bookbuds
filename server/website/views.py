@@ -185,6 +185,38 @@ def delete_note():
 
     return jsonify({})
 
+@views.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    if request.method == 'POST':
+        new_first_name = request.form.get('new_first_name')
+        new_email = request.form.get('new_email')
+        
+        # Perform server-side validation
+        if not new_first_name or len(new_first_name) > 50:
+            flash('Invalid first name.', category='error')
+            return redirect(url_for('views.edit_profile'))
+
+        if not new_email or len(new_email) > 50 or '@' not in new_email:
+            flash('Invalid email.', category='error')
+            return redirect(url_for('views.edit_profile'))
+
+        # Check if the new email is already in use
+        existing_user = User.query.filter(User.email == new_email, User.id != current_user.id).first()
+        if existing_user:
+            flash('Email already in use.', category='error')
+            return redirect(url_for('views.edit_profile'))
+
+        # Update user information
+        current_user.first_name = new_first_name
+        current_user.email = new_email
+        db.session.commit()
+
+        flash('Your profile has been updated!', category='success')
+        return redirect(url_for('views.edit_profile'))
+
+    return render_template("edit_profile.html", user=current_user)
+
 
 
 
@@ -201,9 +233,7 @@ def search_user():
         flash('No existe usuario con ese nombre.', category='error')
         return redirect(url_for('views.index'))
     
-
-
-    
+  
 @views.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 def user_profile(user_id):
     user = User.query.get(user_id)
@@ -232,3 +262,7 @@ def user_profile(user_id):
     else:
         # Usuario no existe
         return redirect(url_for('views.index'))
+    
+
+
+

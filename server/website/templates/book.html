@@ -99,7 +99,9 @@
                 <div class="col-md-6 shadow-sm">
                     <div class="list-group-item list-group-item-action {% if current_user.email == review.user_email %}my-review{% endif %} mb-4 p-3">
                         <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ review.user_email.split('@')[0] }} <small class="ml-2 review-stars {% if review.rating == 1 %}text-danger{% elif review.rating == 2 %}text-danger{% elif review.rating == 3 %}text-warning{% elif review.rating == 4 %}text-warning{% elif review.rating == 5 %}text-success{% endif %}">{% for i in range(review.rating) %}★{% endfor %}{% for i in range(5 - review.rating) %}☆{% endfor %}</small></h5>
+                            <h5 class="mb-1">
+                                <img src="{{ url_for('static', filename=review.user.photo_path) }}" alt="User Image" class="user-image img-thumbnail rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                                {{ review.user_email.split('@')[0] }} <small class="ml-2 review-stars {% if review.rating == 1 %}text-danger{% elif review.rating == 2 %}text-danger{% elif review.rating == 3 %}text-warning{% elif review.rating == 4 %}text-warning{% elif review.rating == 5 %}text-success{% endif %}">{% for i in range(review.rating) %}★{% endfor %}{% for i in range(5 - review.rating) %}☆{% endfor %}</small></h5>
                             {% if current_user.email == review.user_email %}
                             <span class="badge border border-info text-info py-auto">Review hecha por ti</span>
                             {% endif %}
