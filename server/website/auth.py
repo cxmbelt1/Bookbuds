@@ -70,7 +70,6 @@ def sign_up():
     return render_template("sign_up.html", user=current_user)
 
 @auth.route('/profile', methods=['GET', 'POST'])
-
 def profile():
     if request.method == 'POST':
         user = current_user
@@ -82,6 +81,15 @@ def profile():
         if user:
             if name:
                 user.first_name = name
+            if 'picture' in request.files:
+                picture = request.files['picture']
+                if picture.filename != '' and '.' in picture.filename and picture.filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
+                    filename = str(uuid.uuid4()) + secure_filename(picture.filename)
+                    path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    picture.save(path)
+                    print("HEEEEEEEEEELP")
+                    print(path)
+                    user.photo_path = path
             if new_password and new_password_confirmation:
                 if not check_password_hash(user.password, current_password):
                     flash('Incorrect current password.', category='error')
@@ -94,18 +102,15 @@ def profile():
                     return redirect(url_for('auth.edit_profile'))
                 else:
                     user.password = generate_password_hash(new_password, method='pbkdf2:sha256')
-            if 'picture' in request.files:
-                picture = request.files['picture']
-                if picture.filename != '' and '.' in picture.filename and picture.filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
-                    filename = str(uuid.uuid4()) + secure_filename(picture.filename)
-                    path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                    picture.save(path)
-                    print(path)
-                    ##user.photo_path = path
             db.session.commit()
             flash('Profile updated!', category='success')
-            return redirect(url_for('views.index'))
+            return redirect(url_for('auth.profile'))
     return render_template("profile.html", user=current_user)
+
+@auth.route('/profile/edit')
+@login_required
+def edit_profile():
+    return render_template("edit_profile.html", user=current_user)
 
 @auth.route('/idlibro', methods=['GET', 'POST'])
 @login_required
