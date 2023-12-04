@@ -87,9 +87,7 @@ def profile():
                     filename = str(uuid.uuid4()) + secure_filename(picture.filename)
                     path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                     picture.save(path)
-                    print("HEEEEEEEEEELP")
-                    print(path)
-                    user.photo_path = path
+                    user.photo_path = path.split("/static/")[1]
             if new_password and new_password_confirmation:
                 if not check_password_hash(user.password, current_password):
                     flash('Incorrect current password.', category='error')

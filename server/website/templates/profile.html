@@ -7,6 +7,10 @@
     <div class="profile-header">
         <img src="{{ url_for('static', filename=user.photo_path) }}" alt="User Image" class="user-image">
         <h1 class="profile-title">{{ user.first_name }}</h1>
+        {% if user == current_user: %} 
+            <a class="btn btn-primary" href="{{ url_for('auth.edit_profile') }}" role="button">EDIT PROFILE</a>
+        {% endif %}
+    
     </div>
     <div class="profile-info">
         <p class="profile-field"><strong>ID:</strong> {{ user.id }}</p>
