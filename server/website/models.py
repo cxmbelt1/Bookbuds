@@ -3,6 +3,69 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 import pandas as pd
 
+class HashSet:
+    def __init__(self):
+        self.table = {}
+
+    def add(self, item):
+        self.table[item] = True
+
+    def remove(self, item):
+        if item in self.table:
+            del self.table[item]
+
+    def contains(self, item):
+        return item in self.table
+    
+class HashMap:
+    def __init__(self):
+        self.table = {}
+
+    def set(self, key, value):
+        self.table[key] = value
+
+    def get(self, key):
+        return self.table.get(key, None)
+
+    def remove(self, key):
+        if key in self.table:
+            del self.table[key]
+
+class HashGraph:
+    def __init__(self):
+        self.adjacency_list = {}
+
+    def add_vertex(self, vertex):
+        if vertex not in self.adjacency_list:
+            self.adjacency_list[vertex] = []
+
+    def add_edge(self, vertex1, vertex2):
+        self.adjacency_list[vertex1].append(vertex2)
+        self.adjacency_list[vertex2].append(vertex1)
+
+class HashCounter:
+    def __init__(self):
+        self.counts = {}
+
+    def add(self, item):
+        if item in self.counts:
+            self.counts[item] += 1
+        else:
+            self.counts[item] = 1
+
+    def get_count(self, item):
+        return self.counts.get(item, 0)
+    
+class HashCache:
+    def __init__(self):
+        self.cache = {}
+
+    def set(self, key, value):
+        self.cache[key] = value
+
+    def get(self, key):
+        return self.cache.get(key, None)
+    
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     isbn = db.Column(db.String(150), unique=True)
@@ -10,6 +73,14 @@ class Book(db.Model):
     author = db.Column(db.String(300))
     year = db.Column(db.Integer)
     users = db.relationship('User', secondary='list')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'author': self.author,
+            'user_id': self.user_id
+        }
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,6 +103,14 @@ class User(db.Model, UserMixin):
     reviews = db.relationship('Review')
     photo_path = db.Column(db.String(255))
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'books': [book.to_dict() for book in self.books]
+        }
+
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     book_isbn = db.Column(db.String(150), db.ForeignKey('book.isbn'))
@@ -41,6 +120,15 @@ class Review(db.Model):
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     likes = db.relationship('Like', backref='review', lazy='dynamic')
     user = db.relationship('User', backref='review')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'book': self.bookisbn,
+            'review': self.revieww,
+            'author': self.author,
+            'user_id': self.user_id
+        }
 
 class Like(db.Model):
     __tablename__ = 'likes'

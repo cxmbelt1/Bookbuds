@@ -7,6 +7,17 @@ import os
 import uuid
 from flask import current_app as app
 from werkzeug.utils import secure_filename
+import bcrypt
+
+class PasswordManager:
+    @staticmethod
+    def hash_password(pasw):
+        return bcrypt.hashpw(pasw.encode('utf-8'), bcrypt.gensalt())
+
+    @staticmethod
+    def check_password(hashed_password, upasw):
+        
+        return bcrypt.checkpw(upasw.encode('utf-8'), hashed_password)
 
 
 auth = Blueprint('auth', __name__)

@@ -2,123 +2,121 @@
 {% block title %}Home{% endblock %} 
 {% block content %}
 
-<div class="container-fluid row ">
-    <div class="col   mt-5 mr-1 p-4 mb-5 rounded-lg bg-white">
-        <!-- Lista de Libros (60% del ancho) -->
-        <div class="col  mb-3" name="tituloDeLista">
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Reseñas (60% del ancho) -->
+        <div class="col-md-8 mt-5 p-4 mb-5 rounded-lg bg-white">
+            <h5>Reseñas de los libros que sigues</h5>
+            {% if reviews %}
+            <div class="row">
+                {% for review in reviews | reverse %}
+                <div class="col-md-12">
+                    <div class="list-group-item list-group-item-action mb-4 p-3">
+                        <div class="d-flex w-100 justify-content-between align-items-start">
+                            <div class="d-flex w-100 justify-content-between">
+                                <img src="{{ url_for('static', filename=review.user.photo_path) }}" alt="User Image" class="user-image img-thumbnail rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <a href="{{ url_for('views.book', isbn=review.book_isbn) }}" class="text-decoration-none text-dark">
+                                            {{ book_titles[review.book_isbn] }}
+                                        </a>
+                                    </h6>
+                                    <small class="ml-2 review-stars {% if review.rating == 1 %}text-danger{% elif review.rating == 2 %}text-danger{% elif review.rating == 3 %}text-warning{% elif review.rating == 4 %}text-warning{% elif review.rating == 5 %}text-success{% endif %}">
+                                        {% for i in range(review.rating) %}★{% endfor %}
+                                        {% for i in range(5 - review.rating) %}☆{% endfor %}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="d-flex w-100 justify-content-between">
+                                <small>@{{  review.user_email.split('@')[0] }}</small>
+                                {% if review.date %}
+                                <small class="text-muted">{{ review.date.strftime('%Y-%m-%d') }}</small>
+                                {% endif %}
+                                {% if current_user.email == review.user_email %}
+                                <div>
+                                    <button type="button" class="btn btn-sm border ml-auto" data-toggle="modal" data-target="#editReviewModal{{review.id}}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <form action="{{ url_for('views.delete_review', review_id=review.id) }}" method="post" class="ml-2">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <p class="mb-1 review-text small">{{ review.review }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Lista de Libros (40% del ancho) -->
+        <div class="col-md-4 mt-5 p-4 mb-5 rounded-lg bg-white">
             <h3>Mi Lista <span style="font-size: 0.8em;">📚</span></h3>
-            
             {% for list in lists | reverse %}
             <div class="row border rounded {{ 'border-success border-3' if list.is_read }}" id="book-{{ list.book.id }}">
-              <div class="col-12 px-3 py-1 bg-white rounded-lg">
-                <div class="row">
-                    <div name="numeroDeLibro" class="col-1">
-                        {{loop.index}}
-                    </div>
-                    <div class="col-8 border-start">
-                        <a href="{{ url_for('views.book', isbn=list.book.isbn) }}" class="text-decoration-none text-dark">{{list.book.title}}</a>
-                        <i class="bi bi-pencil-square"></i> 
-                    </div>
-                    <div class="col-3 border-start d-flex justify-content-end">
-                        <form method="POST" action="{{ url_for('views.toggle_read') }}" class="me-2">
-                            <input type="hidden" name="book_id" value="{{ list.book.id }}">
-                            <button type="submit" class="btn btn-link p-0 {% if list.is_read %}text-success{% else %}text-secondary{% endif %}">
-                                <i class="fa fa-check" style="font-size: 1.5em;"></i> 
-                            </button>
-                        </form>
-                        <form method="POST" action="{{ url_for('views.delete_book') }}">
-                            <input type="hidden" name="book_id" value="{{ list.book.id }}">
-                            <button type="submit" class="fa fa-times cursor-pointer text-danger" style="background: none; border: none; font-size: 1.5em;"></button>
-                        </form>
+                <div class="col-12 px-3 py-1 bg-white rounded-lg">
+                    <div class="row">
+                        <div name="numeroDeLibro" class="col-1">
+                            {{loop.index}}
+                        </div>
+                        <div class="col-8 border-start">
+                            <a href="{{ url_for('views.book', isbn=list.book.isbn) }}" class="text-decoration-none text-dark">{{list.book.title}}</a>
+                            <i class="bi bi-pencil-square"></i> 
+                        </div>
+                        <div class="col-3 border-start d-flex justify-content-end">
+                            <form method="POST" action="{{ url_for('views.toggle_read') }}" class="me-2">
+                                <input type="hidden" name="book_id" value="{{ list.book.id }}">
+                                <button type="submit" class="btn btn-link p-0 {% if list.is_read %}text-success{% else %}text-secondary{% endif %}">
+                                    <i class="fa fa-check" style="font-size: 1.5em;"></i> 
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('views.delete_book') }}">
+                                <input type="hidden" name="book_id" value="{{ list.book.id }}">
+                                <button type="submit" class="fa fa-times cursor-pointer text-danger" style="background: none; border: none; font-size: 1.5em;"></button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
             {% endfor %}
-            
-            <div class="row">
-              <div class="col d-flex justify-content-end">
-                  <button type="button" class="btn btn-warning ml-0 mt-4" data-toggle="modal" data-target="#addBookModal">
-                      Agregar libro
-                  </button>
-              </div>
-              <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="addBookModalLabel">Agregar libro</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                     
-                      <form method="POST" class="form-group">
-                        <label for="book_id">Selecciona un libro:</label>
-                        <select name="book_id" class="form-control">
-                            {% for book in books %}
-                                <option value="{{ book.id }}">{{ book.title }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="btn btn-info mt-3">Agregar libro a mi perfil</button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-          </div>
-        </div> 
-      </div>
-      
-        <!-- Reseñas (40% del ancho) -->
-        <div class="col-md-4   mt-5 p-4 mb-5 rounded-lg bg-white">
-          <h5>Reseñas de los libros que sigues</h5>
-          {% if reviews %}
-          <div class="row">
-              {% for review in reviews |reverse %}
-              <div class="col-md-12">
-                  <div class="list-group-item list-group-item-action mb-4 p-3">
-                      <div class="d-flex w-100 justify-content-between align-items-start">
-                          <div class="d-flex w-100 justify-content-between">
-                              <img src="{{ url_for('static', filename=review.user.photo_path) }}" alt="User Image" class="user-image img-thumbnail rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
-                              <div>
-                                  <h6 class="mb-1">
-                                      <a href="{{ url_for('views.book', isbn=review.book_isbn) }}" class="text-decoration-none text-dark">
-                                          {{ book_titles[review.book_isbn] }}
-                                      </a>
-                                  </h6>
-                                  <small class="ml-2 review-stars {% if review.rating == 1 %}text-danger{% elif review.rating == 2 %}text-danger{% elif review.rating == 3 %}text-warning{% elif review.rating == 4 %}text-warning{% elif review.rating == 5 %}text-success{% endif %}">
-                                      {% for i in range(review.rating) %}★{% endfor %}
-                                      {% for i in range(5 - review.rating) %}☆{% endfor %}
-                                  </small>
-                              </div>
-                          </div>
-                          <div class="d-flex w-100 justify-content-between">
-                              <small>@{{  review.user_email.split('@')[0] }}</small>
-                              {% if review.date %}
-                              <small class="text-muted">{{ review.date.strftime('%Y-%m-%d') }}</small>
-                              {% endif %}
-                              {% if current_user.email == review.user_email %}
-                              <div>
-                                  <button type="button" class="btn btn-sm border ml-auto" data-toggle="modal" data-target="#editReviewModal{{review.id}}">
-                                      <i class="fas fa-edit"></i>
-                                  </button>
-                                  <form action="{{ url_for('views.delete_review', review_id=review.id) }}" method="post" class="ml-2">
-                                      <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-times"></i></button>
-                                  </form>
-                              </div>
-                              {% endif %}
-                          </div>
-                          <p class="mb-1 review-text small">{{ review.review }}</p>
-                      </div>
-                  </div>
-              </div>
-              {% endfor %}
-          </div>
-          {% endif %}
-        </div>
-    </div>
 
+            <div class="row">
+                <div class="col d-flex justify-content-end">
+                    <button type="button" class="btn btn-warning ml-0 mt-4" data-toggle="modal" data-target="#addBookModal">
+                        Agregar libro
+                    </button>
+                </div>
+                <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addBookModalLabel">Agregar libro</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" class="form-group">
+                                    <label for="book_id">Selecciona un libro:</label>
+                                    <select name="book_id" class="form-control">
+                                        {% for book in books %}
+                                            <option value="{{ book.id }}">{{ book.title }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit" class="btn btn-info mt-3">Agregar libro a mi perfil</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+    </div>
 </div>
 
 {% endblock %}
